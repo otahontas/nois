@@ -1,4 +1,12 @@
 [[package]]
+name = "aniso8601"
+version = "7.0.0"
+description = "A library for parsing ISO 8601 strings."
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "appdirs"
 version = "1.4.4"
 description = "A small Python module for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
@@ -37,6 +45,55 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
+name = "graphene"
+version = "2.1.8"
+description = "GraphQL Framework for Python"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+django = ["graphene-django"]
+sqlalchemy = ["graphene-sqlalchemy"]
+test = ["pytest", "pytest-benchmark", "pytest-cov", "pytest-mock", "snapshottest", "coveralls", "promise", "six", "mock", "pytz", "iso8601"]
+
+[package.dependencies]
+aniso8601 = ">=3,<=7"
+graphql-core = ">=2.1,<3"
+graphql-relay = ">=2,<3"
+six = ">=1.10.0,<2"
+
+[[package]]
+name = "graphql-core"
+version = "2.3.2"
+description = "GraphQL implementation for Python"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+gevent = ["gevent (>=1.1)"]
+test = ["six (1.14.0)", "pyannotate (1.2.0)", "pytest (4.6.10)", "pytest-django (3.9.0)", "pytest-cov (2.8.1)", "coveralls (1.11.1)", "cython (0.29.17)", "gevent (1.5.0)", "pytest-benchmark (3.2.3)", "pytest-mock (2.0.0)"]
+
+[package.dependencies]
+promise = ">=2.3,<3"
+rx = ">=1.6,<2"
+six = ">=1.10.0"
+
+[[package]]
+name = "graphql-relay"
+version = "2.0.1"
+description = "Relay implementation for Python"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+graphql-core = ">=2.2,<3"
+promise = ">=2.2,<3"
+six = ">=1.12"
+
+[[package]]
 name = "h11"
 version = "0.9.0"
 description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
@@ -73,12 +130,42 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
+name = "promise"
+version = "2.3"
+description = "Promises/A+ implementation for Python"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+test = ["pytest (>=2.7.3)", "pytest-cov", "coveralls", "futures", "pytest-benchmark", "mock"]
+
+[package.dependencies]
+six = "*"
+
+[[package]]
 name = "regex"
 version = "2020.7.14"
 description = "Alternative regular expression module, to replace re."
 category = "dev"
 optional = false
 python-versions = "*"
+
+[[package]]
+name = "rx"
+version = "1.6.1"
+description = "Reactive Extensions (Rx) for Python"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "six"
+version = "1.15.0"
+description = "Python 2 and 3 compatibility utilities"
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "starlette"
@@ -153,9 +240,13 @@ python-versions = ">=3.6.1"
 [metadata]
 lock-version = "1.0"
 python-versions = "^3.8"
-content-hash = "0350360ad5d71a3783ed998bf98bb747ffb6d541eedc64c16cc884378106dcfd"
+content-hash = "2e2f967993564e2748bd738f51a248bc0a7e750b9e3426a231f1572b9cfc3702"
 
 [metadata.files]
+aniso8601 = [
+    {file = "aniso8601-7.0.0-py2.py3-none-any.whl", hash = "sha256:d10a4bf949f619f719b227ef5386e31f49a2b6d453004b21f02661ccc8670c7b"},
+    {file = "aniso8601-7.0.0.tar.gz", hash = "sha256:513d2b6637b7853806ae79ffaca6f3e8754bdd547048f5ccc1420aec4b714f1e"},
+]
 appdirs = [
     {file = "appdirs-1.4.4-py2.py3-none-any.whl", hash = "sha256:a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128"},
     {file = "appdirs-1.4.4.tar.gz", hash = "sha256:7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41"},
@@ -167,6 +258,18 @@ black = [
 click = [
     {file = "click-7.1.2-py2.py3-none-any.whl", hash = "sha256:dacca89f4bfadd5de3d7489b7c8a566eee0d3676333fbb50030263894c38c0dc"},
     {file = "click-7.1.2.tar.gz", hash = "sha256:d2b5255c7c6349bc1bd1e59e08cd12acbbd63ce649f2588755783aa94dfb6b1a"},
+]
+graphene = [
+    {file = "graphene-2.1.8-py2.py3-none-any.whl", hash = "sha256:09165f03e1591b76bf57b133482db9be6dac72c74b0a628d3c93182af9c5a896"},
+    {file = "graphene-2.1.8.tar.gz", hash = "sha256:2cbe6d4ef15cfc7b7805e0760a0e5b80747161ce1b0f990dfdc0d2cf497c12f9"},
+]
+graphql-core = [
+    {file = "graphql-core-2.3.2.tar.gz", hash = "sha256:aac46a9ac524c9855910c14c48fc5d60474def7f99fd10245e76608eba7af746"},
+    {file = "graphql_core-2.3.2-py2.py3-none-any.whl", hash = "sha256:44c9bac4514e5e30c5a595fac8e3c76c1975cae14db215e8174c7fe995825bad"},
+]
+graphql-relay = [
+    {file = "graphql-relay-2.0.1.tar.gz", hash = "sha256:870b6b5304123a38a0b215a79eace021acce5a466bf40cd39fa18cb8528afabb"},
+    {file = "graphql_relay-2.0.1-py3-none-any.whl", hash = "sha256:ac514cb86db9a43014d7e73511d521137ac12cf0101b2eaa5f0a3da2e10d913d"},
 ]
 h11 = [
     {file = "h11-0.9.0-py2.py3-none-any.whl", hash = "sha256:4bc6d6a1238b7615b266ada57e0618568066f57dd6fa967d1290ec9309b2f2f1"},
@@ -194,6 +297,9 @@ pathspec = [
     {file = "pathspec-0.8.0-py2.py3-none-any.whl", hash = "sha256:7d91249d21749788d07a2d0f94147accd8f845507400749ea19c1ec9054a12b0"},
     {file = "pathspec-0.8.0.tar.gz", hash = "sha256:da45173eb3a6f2a5a487efba21f050af2b41948be6ab52b6a1e3ff22bb8b7061"},
 ]
+promise = [
+    {file = "promise-2.3.tar.gz", hash = "sha256:dfd18337c523ba4b6a58801c164c1904a9d4d1b1747c7d5dbf45b693a49d93d0"},
+]
 regex = [
     {file = "regex-2020.7.14-cp27-cp27m-win32.whl", hash = "sha256:e46d13f38cfcbb79bfdb2964b0fe12561fe633caf964a77a5f8d4e45fe5d2ef7"},
     {file = "regex-2020.7.14-cp27-cp27m-win_amd64.whl", hash = "sha256:6961548bba529cac7c07af2fd4d527c5b91bb8fe18995fed6044ac22b3d14644"},
@@ -216,6 +322,14 @@ regex = [
     {file = "regex-2020.7.14-cp38-cp38-win32.whl", hash = "sha256:d6cff2276e502b86a25fd10c2a96973fdb45c7a977dca2138d661417f3728341"},
     {file = "regex-2020.7.14-cp38-cp38-win_amd64.whl", hash = "sha256:7a2dd66d2d4df34fa82c9dc85657c5e019b87932019947faece7983f2089a840"},
     {file = "regex-2020.7.14.tar.gz", hash = "sha256:3a3af27a8d23143c49a3420efe5b3f8cf1a48c6fc8bc6856b03f638abc1833bb"},
+]
+rx = [
+    {file = "Rx-1.6.1-py2.py3-none-any.whl", hash = "sha256:7357592bc7e881a95e0c2013b73326f704953301ab551fbc8133a6fadab84105"},
+    {file = "Rx-1.6.1.tar.gz", hash = "sha256:13a1d8d9e252625c173dc795471e614eadfe1cf40ffc684e08b8fff0d9748c23"},
+]
+six = [
+    {file = "six-1.15.0-py2.py3-none-any.whl", hash = "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"},
+    {file = "six-1.15.0.tar.gz", hash = "sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259"},
 ]
 starlette = [
     {file = "starlette-0.13.8-py3-none-any.whl", hash = "sha256:40afea6ffa830849800cc4efdf006a86ad579d6ba6b64cb1925a1897b020ba6e"},
