@@ -9,11 +9,15 @@ from .graphql.mutations import Mutation
 from .gino import db
 
 routes = [
-    Route('/', GraphQLApp(
-        schema=Schema(query=Query, mutation=Mutation),
-        executor_class=AsyncioExecutor,
-    ))
+    Route(
+        "/",
+        GraphQLApp(
+            schema=Schema(query=Query, mutation=Mutation),
+            executor_class=AsyncioExecutor,
+        ),
+    )
 ]
+
 
 def get_app():
     app = Starlette(routes=routes)
