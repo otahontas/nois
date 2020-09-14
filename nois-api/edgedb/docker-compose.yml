@@ -1,0 +1,14 @@
+version: "3"
+services:
+  database:
+    image: edgedb/edgedb
+    container_name: "nois-api-database" 
+    restart: on-failure
+    volumes:
+      - data:/var/lib/edgedb/data
+    ports:
+      - 5656:5656
+      - 8888:8888
+
+volumes:
+  data: 
