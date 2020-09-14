@@ -7,6 +7,7 @@ from graphene import ObjectType, String, Schema
 
 from .graphql.queries import Query
 from .graphql.mutations import Mutation
+from .db import db
 
 routes = [
     Route('/', GraphQLApp(
@@ -16,4 +17,4 @@ routes = [
 ]
 
 app = Starlette(routes=routes)
-db = Gino(app, user="nois", password="nois", database="nois")
+db.init_app(app)
