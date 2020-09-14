@@ -1,4 +1,4 @@
-from graphene import ObjectType, String, ID
+from graphene import ObjectType, String, List, ID
 
 class Message(ObjectType):
     id = ID(required=True)
@@ -7,3 +7,6 @@ class Message(ObjectType):
     async def resolve_content_url(self, info):
         return "http://example.com"
 
+class Thread(ObjectType):
+    id = ID()
+    messages = List(lambda: Message)

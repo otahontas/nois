@@ -4,7 +4,7 @@ from starlette.routing import Route
 from starlette.graphql import GraphQLApp
 from graphene import ObjectType, String, Schema
 
-from .graphql.schema import Query
+from .graphql.queries import Query
 
 routes = [
     Route('/', GraphQLApp(
