@@ -19,12 +19,13 @@ class Query(graphene.ObjectType):
         # We can make asynchronous network calls here.
         return "Hello " + name
 
+
 routes = [
     # We're using `executor_class=AsyncioExecutor` here.
-    Route('/', GraphQLApp(
-        schema=graphene.Schema(query=Query),
-        executor_class=AsyncioExecutor
-    ))
+    Route(
+        "/",
+        GraphQLApp(schema=graphene.Schema(query=Query), executor_class=AsyncioExecutor),
+    )
 ]
 
 app = Starlette(routes=routes)

@@ -45,6 +45,22 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
+name = "edgedb"
+version = "0.10.0"
+description = "EdgeDB Python driver"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+dev = ["Cython (0.29.14)", "pytest (>=3.6.0)", "sphinx (>=2.3.1,<2.4.0)", "sphinxcontrib-asyncio (>=0.2.0,<0.3.0)", "sphinx-rtd-theme (>=0.4.3,<0.5.0)", "pycodestyle (>=2.6.0,<2.7.0)", "pyflakes (>=2.2.0,<2.3.0)", "flake8 (>=3.8.1,<3.9.0)", "uvloop (>=0.14.0)"]
+docs = ["sphinx (>=2.3.1,<2.4.0)", "sphinxcontrib-asyncio (>=0.2.0,<0.3.0)", "sphinx-rtd-theme (>=0.4.3,<0.5.0)"]
+test = ["pycodestyle (>=2.6.0,<2.7.0)", "pyflakes (>=2.2.0,<2.3.0)", "flake8 (>=3.8.1,<3.9.0)", "uvloop (>=0.14.0)"]
+
+[package.dependencies]
+typing-extensions = ">=3.7.4,<3.8.0"
+
+[[package]]
 name = "graphene"
 version = "2.1.8"
 description = "GraphQL Framework for Python"
@@ -198,7 +214,7 @@ python-versions = "*"
 name = "typing-extensions"
 version = "3.7.4.3"
 description = "Backported and Experimental Type Hints for Python 3.5+"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -240,7 +256,7 @@ python-versions = ">=3.6.1"
 [metadata]
 lock-version = "1.0"
 python-versions = "^3.8"
-content-hash = "2e2f967993564e2748bd738f51a248bc0a7e750b9e3426a231f1572b9cfc3702"
+content-hash = "d72de7dc833e02f5539047a6d6e90ea6f092922e537b9f9296168e1f1b0cb42f"
 
 [metadata.files]
 aniso8601 = [
@@ -258,6 +274,18 @@ black = [
 click = [
     {file = "click-7.1.2-py2.py3-none-any.whl", hash = "sha256:dacca89f4bfadd5de3d7489b7c8a566eee0d3676333fbb50030263894c38c0dc"},
     {file = "click-7.1.2.tar.gz", hash = "sha256:d2b5255c7c6349bc1bd1e59e08cd12acbbd63ce649f2588755783aa94dfb6b1a"},
+]
+edgedb = [
+    {file = "edgedb-0.10.0-cp36-cp36m-macosx_10_14_x86_64.whl", hash = "sha256:866fce3915e899d72da9c462f2a3e92aeaedfc5d06606714afa1e04dab7e5bdd"},
+    {file = "edgedb-0.10.0-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:375187dd40bfafa409956a1a0e3bdf2e716f67de56a0fba6df05bac15fc4d992"},
+    {file = "edgedb-0.10.0-cp36-cp36m-win_amd64.whl", hash = "sha256:400e5fe6eefda55ad58eb4c526a0cfc60cd07dd70a31ca53597e5ca1761dd9ac"},
+    {file = "edgedb-0.10.0-cp37-cp37m-macosx_10_14_x86_64.whl", hash = "sha256:6c4dd0d1f14936c22b1f355e330f7bf99885a2b5c03f466fac7fe3171b4d5a18"},
+    {file = "edgedb-0.10.0-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:5e9aa4f7ed009ac65ae6d3e49eb97ba29363ea39d2da5681481cffa3da0c04be"},
+    {file = "edgedb-0.10.0-cp37-cp37m-win_amd64.whl", hash = "sha256:31bb92e182d696ae4e0406c911fbb24e6d7a90771ec6e28c5251792e1a58f508"},
+    {file = "edgedb-0.10.0-cp38-cp38-macosx_10_14_x86_64.whl", hash = "sha256:8a22db7ac4b53aaaf84d38a1fb031455da0b61d6a54d726b8eac372a7b47c3d4"},
+    {file = "edgedb-0.10.0-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:05c34f2c2eb526c1169bb8928bde33329b8a3b887c89f30a7e33b689c76b1660"},
+    {file = "edgedb-0.10.0-cp38-cp38-win_amd64.whl", hash = "sha256:40a3f2dc0d0ee7921eec54caf0c8b15389c209699ed080e85d26bb3bd48720bc"},
+    {file = "edgedb-0.10.0.tar.gz", hash = "sha256:6a4408a417a05129abb297fa24fa2ca08150856b4532c09bd72427603fff077d"},
 ]
 graphene = [
     {file = "graphene-2.1.8-py2.py3-none-any.whl", hash = "sha256:09165f03e1591b76bf57b133482db9be6dac72c74b0a628d3c93182af9c5a896"},
