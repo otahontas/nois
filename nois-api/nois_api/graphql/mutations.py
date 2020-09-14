@@ -1,5 +1,6 @@
 from graphene import ObjectType, Mutation, String, Boolean, Field
 from .types import Message
+from ..gino.models import MessageModel
 
 class CreateMessage(Mutation):
     class Arguments:
@@ -8,10 +9,12 @@ class CreateMessage(Mutation):
     ok = Boolean()
     message = Field(Message)
 
-    def mutate(root, info, content_url):
-        message = Message(content_url = content_url, id="1")
+    async def mutate(root, info, content_url):
+        message = await MessageModel.create(content_url=content_url)
+        print(message)
+        m2 = Message(content_url = content_url, id="1")
         ok = True
-        return CreateMessage(message=message, ok=ok)
+        return CreateMessage(message=m2, ok=ok)
 
 class Mutation(ObjectType):
     create_message = CreateMessage.Field()
