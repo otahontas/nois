@@ -12,4 +12,4 @@ class MessageModel(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     content_url = db.Column(db.String(), nullable=False)
-    thread_id = db.Column(db.Integer, db.ForeignKey('threads.id'))
+    thread_id = db.Column(db.Integer, db.ForeignKey('threads.id'), nullable=False)
