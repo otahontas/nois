@@ -5,5 +5,9 @@ from .types import Thread
 
 class Query(ObjectType):
     message = Field(Message)
-    thread = Field(Thread)
 
+    async def resolve_message(root, info): 
+        return Message(
+            id="1001",
+            content_url="http://example.com"
+        )
