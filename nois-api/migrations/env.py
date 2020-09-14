@@ -17,7 +17,11 @@ fileConfig(config.config_file_name)
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+from nois_api.config import DB_DSN
+from nois_api.app import db
+
+config.set_main_option("sqlalchemy.url", str(DB_DSN))
+target_metadata = db
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
