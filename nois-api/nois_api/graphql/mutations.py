@@ -1,22 +1,29 @@
-from graphene import ObjectType, Mutation, String, Boolean, Field
-from .types import Message
-from ..gino.models import MessageModel
+from graphene import ObjectType, Mutation, String, Boolean, Field, Int
+from .types import Message, Thread
+from ..gino.models import MessageModel, ThreadModel
+
+from pprint import pprint
 
 
 class CreateMessage(Mutation):
     class Arguments:
-        content_url = String()
+        content_url = String(required=True)
+        thread_id = Int(required=True)
 
-    ok = Boolean()
     message = Field(Message)
 
-    async def mutate(root, info, content_url):
-        message = await MessageModel.create(content_url=content_url)
-        print(message)
-        m2 = Message(content_url=content_url, id="1")
-        ok = True
-        return CreateMessage(message=m2, ok=ok)
+    async def mutate(root, info, content_url, thread_id):
+        message = await MessageModel.create(content_url=content_url, thread_id=thread_id)
+        return CreateMessage(message=message)
+
+class CreateThread(Mutation):
+    thread = Field(Thread)
+
+    async def mutate(root, info):
+        thread = await ThreadModel.create()
+        return CreateThread(thread=thread)
 
 
 class Mutation(ObjectType):
     create_message = CreateMessage.Field()
+    create_thread = CreateThread.Field()
