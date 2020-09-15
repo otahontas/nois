@@ -2,8 +2,11 @@ from sqlalchemy.engine.url import URL, make_url
 from starlette.config import Config
 from starlette.datastructures import Secret
 
+from pathlib import Path
+
 config = Config(".env")
 
+# Database
 DB_DRIVER = config("DB_DRIVER", default="postgresql")
 DB_HOST = config("DB_HOST", default=None)
 DB_PORT = config("DB_PORT", cast=int, default=None)
@@ -31,3 +34,6 @@ DB_USE_CONNECTION_FOR_REQUEST = config(
 )
 DB_RETRY_LIMIT = config("DB_RETRY_LIMIT", cast=int, default=1)
 DB_RETRY_INTERVAL = config("DB_RETRY_INTERVAL", cast=int, default=1)
+
+# File API
+FILE_API_FOLDER = config("FILE_API_FOLDER", cast=str, default=str(Path(__file__).parent.parent / "files"))
