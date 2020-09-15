@@ -18,7 +18,7 @@ async def stream_file(request: Request) -> StreamingResponse:
         description: Requested file doesn't exist
     """
 
-    filename = request.path_params["filename"]
+    filename = str(request.path_params["filename"])
     path_to_file = FILE_API_FOLDER / filename
 
     if not path_to_file.exists():
@@ -70,7 +70,7 @@ async def delete_file(request: Request) -> None:
         description: Requested file doesn't exist
     """
 
-    filename = request.path_params["filename"]
+    filename = str(request.path_params["filename"])
     path_to_file = FILE_API_FOLDER / filename
 
     try:

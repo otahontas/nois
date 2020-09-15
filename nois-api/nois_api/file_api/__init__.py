@@ -20,7 +20,7 @@ def init_file_api_folder():
 
 file_api_routes = [
     Route("/schema", openapi_schema, include_in_schema=False),
-    Route("/{filename}", stream_file, methods=["GET"], name="stream_file"),
-    Route("/{filename}", delete_file, methods=["DELETE"]),
+    Route("/{filename:uuid}", stream_file, methods=["GET"], name="stream_file"),
+    Route("/{filename:uuid}", delete_file, methods=["DELETE"]),
     Route("/", add_file, methods=["POST"]),
 ]

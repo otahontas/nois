@@ -25,3 +25,13 @@ def test_uploading_getting_and_deleting_file(client):
 
     response = client.delete(f"{base_url}{filename}")
     assert response.status_code == 204
+
+
+def test_get_is_404_for_malformatted_uuid(client):
+    response = client.get(f"{base_url}swaglittinen")
+    assert response.status_code == 404
+
+
+def test_get_is_404_for_non_existing_uuid(client):
+    response = client.get(f"{base_url}0850308f-a007-40c8-b45a-96c45953789a")
+    assert response.status_code == 404
