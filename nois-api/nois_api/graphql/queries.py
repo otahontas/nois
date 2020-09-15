@@ -1,17 +1,27 @@
 from graphene import ObjectType, Field, Int, List
 
-from .types import Message
-from .types import Thread
+from .types import Message, Thread
 
-from ..gino.models import MessageModel
+from ..gino.models import MessageModel, ThreadModel
 
 
 class Query(ObjectType):
     message = Field(Message, id=Int(required=True))
     messages = List(Message)
+    thread = Field(Thread, id=Int(required=True))
+    threads = List(Thread)
 
     async def resolve_message(root, info, id):
         return await MessageModel.get(id)
 
     async def resolve_messages(root, info):
         return await MessageModel.query.gino.all()
+
+    async def resolve_thread(root, info, id):
+        return await ThreadModel.get(id)
+
+    async def resolve_threads(root, info):
+        query = ThreadModel.outerjoin(MessageModel).select()
+        return await query.gino.load(
+            ThreadModel.distinct(ThreadModel.id).load(add_message=MessageModel)
+        ).all()

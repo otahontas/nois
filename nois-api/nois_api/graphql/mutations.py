@@ -13,8 +13,11 @@ class CreateMessage(Mutation):
     message = Field(Message)
 
     async def mutate(root, info, content_url, thread_id):
-        message = await MessageModel.create(content_url=content_url, thread_id=thread_id)
+        message = await MessageModel.create(
+            content_url=content_url, thread_id=thread_id
+        )
         return CreateMessage(message=message)
+
 
 class CreateThread(Mutation):
     thread = Field(Thread)
