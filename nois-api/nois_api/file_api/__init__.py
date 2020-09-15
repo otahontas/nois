@@ -16,7 +16,7 @@ def openapi_schema(request):
 
 file_api_routes = [
     Route("/schema", openapi_schema, include_in_schema=False),
-    Route("/{filename}", stream_file, methods=["GET"]),
+    Route("/{filename}", stream_file, methods=["GET"], name="stream_file"),
     Route("/{filename}", delete_file, methods=["DELETE"]),
     Route("/", add_file, methods=["POST"]),
 ]

@@ -2,6 +2,7 @@ from . import db
 from sqlalchemy.dialects.postgresql import UUID
 from uuid import uuid4
 
+
 class BaseModel(db.Model):
     """Base for other models to inherit."""
 
@@ -34,6 +35,4 @@ class MessageModel(BaseModel):
     __tablename__ = "messages"
 
     content_filename = db.Column(db.String(), nullable=False)
-    thread_id = db.Column(
-        UUID, db.ForeignKey("threads.id"), nullable=False
-    )
+    thread_id = db.Column(UUID, db.ForeignKey("threads.id"), nullable=False)

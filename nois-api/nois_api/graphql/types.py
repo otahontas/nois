@@ -8,4 +8,9 @@ class Thread(ObjectType):
 
 class Message(ObjectType):
     id = ID(required=True)
-    content_filename = String(required=True)
+    content_location = String(required=True)
+
+    def resolve_content_location(parent, info):
+        return info.context["request"].url_for(
+            "files:stream_file", filename=parent.content_filename
+        )
