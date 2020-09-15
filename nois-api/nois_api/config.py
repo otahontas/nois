@@ -40,6 +40,6 @@ DB_RETRY_INTERVAL = config("DB_RETRY_INTERVAL", cast=int, default=1)
 FILE_API_FOLDER = config(
     "FILE_API_FOLDER", default=Path(__file__).parent.parent.absolute() / "files"
 )
-FILE_API_DEFAULT_BLOCKSIZE = config(
-    "FILE_API_DEFAULT_BLOCKSIZE", cast=int, default=2 ** 14
+FILE_API_DEFAULT_CHUNK_SIZE = config(
+    "FILE_API_DEFAULT_BLOCKSIZE", cast=int, default=1024
 )
