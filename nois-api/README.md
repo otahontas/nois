@@ -14,7 +14,4 @@ GraphQL API for the anonymous voice message board app Nois.
 - Requirements: `python 3.8+` and `poetry`
 - Run `poetry install` to install all dependencies and dev-dependencies
 - Run `poetry run uvicorn poetry nois_api.main:app` to launch server. Add `--reload` flag for hot reloading.
-- After changing Gino models, db migrations can be ran as follows:
-  1. Generate revisions with `poetry run alembic revision --autogenerate -m 'Message describing the changes'`
-  2. Check the generated revision files, fix things if not ok
-  3. Run changes with `poetry run alembic upgrade head`
+- For migrations see [migrations/README](migrations/README.md)
