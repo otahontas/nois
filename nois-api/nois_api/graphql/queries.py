@@ -1,4 +1,4 @@
-from graphene import ObjectType, Field, Int, List
+from graphene import ObjectType, Field, List, String
 
 from .types import Message, Thread
 
@@ -6,9 +6,9 @@ from ..gino.models import MessageModel, ThreadModel
 
 
 class Query(ObjectType):
-    message = Field(Message, id=Int(required=True))
+    message = Field(Message, id=String(required=True))
     messages = List(Message)
-    thread = Field(Thread, id=Int(required=True))
+    thread = Field(Thread, id=String(required=True))
     threads = List(Thread)
 
     async def resolve_message(root, info, id):

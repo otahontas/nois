@@ -1,10 +1,21 @@
 from . import db
+from sqlalchemy.dialects.postgresql import UUID
+from uuid import uuid4
+
+class BaseModel(db.Model):
+    """Base for other models to inherit."""
+
+    id = db.Column(
+        UUID,
+        primary_key=True,
+        default=uuid4,
+        unique=True,
+        nullable=False,
+    )
 
 
-class ThreadModel(db.Model):
+class ThreadModel(BaseModel):
     __tablename__ = "threads"
-
-    id = db.Column(db.Integer(), primary_key=True)
 
     def __init__(self, **kw):
         super().__init__(**kw)
@@ -19,9 +30,10 @@ class ThreadModel(db.Model):
         self._messages.add(message)
 
 
-class MessageModel(db.Model):
+class MessageModel(BaseModel):
     __tablename__ = "messages"
 
-    id = db.Column(db.Integer(), primary_key=True)
-    content_url = db.Column(db.String(), nullable=False)
-    thread_id = db.Column(db.Integer, db.ForeignKey("threads.id"), nullable=False)
+    content_filename = db.Column(db.String(), nullable=False)
+    thread_id = db.Column(
+        UUID, db.ForeignKey("threads.id"), nullable=False
+    )

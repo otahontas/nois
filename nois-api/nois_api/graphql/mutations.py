@@ -7,14 +7,14 @@ from pprint import pprint
 
 class CreateMessage(Mutation):
     class Arguments:
-        content_url = String(required=True)
-        thread_id = Int(required=True)
+        content_filename = String(required=True)
+        thread_id = String(required=True)
 
     message = Field(Message)
 
-    async def mutate(root, info, content_url, thread_id):
+    async def mutate(root, info, content_filename, thread_id):
         message = await MessageModel.create(
-            content_url=content_url, thread_id=thread_id
+            content_filename=content_filename, thread_id=thread_id
         )
         return CreateMessage(message=message)
 

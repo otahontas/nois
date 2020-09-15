@@ -8,4 +8,4 @@ class Thread(ObjectType):
 
 class Message(ObjectType):
     id = ID(required=True)
-    content_url = String(required=True)
+    content_filename = String(required=True)
