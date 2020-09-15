@@ -3,7 +3,7 @@ from starlette.routing import Route, Mount
 
 from .gino import db
 from .graphql import graphql_app
-from .file_api import file_api_routes
+from .file_api import file_api_routes, init_file_api_folder
 
 from .config import GRAPHQL_API_BASE_URL, FILE_API_BASE_URL
 
@@ -14,6 +14,6 @@ routes = [
 
 
 def get_app():
-    app = Starlette(routes=routes)
+    app = Starlette(routes=routes, on_startup=[init_file_api_folder])
     db.init_app(app)
     return app
