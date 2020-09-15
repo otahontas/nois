@@ -15,8 +15,9 @@ services:
       - POSTGRES_PASSWORD=nois_test
       - POSTGRES_DB=nois_test
     volumes:
-      - data:/var/lib/postgresql/data/
+      - test_data:/var/lib/postgresql/data/
     ports:
       - 5432:5432
 volumes:
   data:
+  test_data:

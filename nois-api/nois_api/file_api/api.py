@@ -5,7 +5,7 @@ from starlette.exceptions import HTTPException
 from ..config import FILE_API_FOLDER, FILE_API_DEFAULT_CHUNK_SIZE
 from pathlib import Path
 import aiofiles
-import uuid
+from uuid import uuid4
 
 
 async def stream_file(request: Request) -> StreamingResponse:
@@ -47,11 +47,9 @@ async def add_file(request: Request) -> JSONResponse:
     """
     form = await request.form()
     contents = await form["upload_file"].read()
-    filename = str(uuid.uuid4())
-    path_to_file = FILE_API_FOLDER / filename
-    while path_to_file.exists():
-        filename = str(uuid.uuid4())
-        path_to_file = FILE_API_FOLDER / filename
+
+    while (path_to_file := FILE_API_FOLDER / str(uuid4())).exists():
+        continue
 
     async with aiofiles.open(str(path_to_file), "wb") as new_file:
         written_bytes = await new_file.write(contents)
@@ -59,7 +57,7 @@ async def add_file(request: Request) -> JSONResponse:
             raise HTTPException(
                 status_code=400, contents="Couldn't save file to server."
             )
-    return JSONResponse({"filename": filename}, status_code=201)
+    return JSONResponse({"filename": path_to_file.name}, status_code=201)
 
 
 async def delete_file(request: Request) -> None:
