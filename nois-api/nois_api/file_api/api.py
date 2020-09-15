@@ -34,7 +34,7 @@ async def stream_file(request: Request) -> StreamingResponse:
     return StreamingResponse(stream_file(str(path_to_file)))
 
 
-async def add_file(self, request: Request) -> JSONResponse:
+async def add_file(request: Request) -> JSONResponse:
     """
     description: Upload file
     responses:

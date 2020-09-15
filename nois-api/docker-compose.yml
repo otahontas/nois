@@ -8,5 +8,15 @@ services:
       - data:/var/lib/postgresql/data/
     ports:
       - 5432:5432
+  test_database:
+    image: "postgres"
+    environment:
+      - POSTGRES_USER=nois_test
+      - POSTGRES_PASSWORD=nois_test
+      - POSTGRES_DB=nois_test
+    volumes:
+      - data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
 volumes:
   data:
