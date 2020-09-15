@@ -1,4 +1,5 @@
 from graphene import ObjectType, Field, List, String
+from asyncpg.exceptions import UndefinedTableError
 
 from .types import Message, Thread
 
@@ -22,6 +23,9 @@ class Query(ObjectType):
 
     async def resolve_threads(root, info):
         query = ThreadModel.outerjoin(MessageModel).select()
-        return await query.gino.load(
-            ThreadModel.distinct(ThreadModel.id).load(add_message=MessageModel)
-        ).all()
+        try:
+            return await query.gino.load(
+                ThreadModel.distinct(ThreadModel.id).load(add_message=MessageModel)
+            ).all()
+        except UndefinedTableError as error:
+            return []
