@@ -2,7 +2,8 @@ from sqlalchemy.engine.url import URL, make_url
 from starlette.config import Config
 from starlette.datastructures import Secret
 
-from pathlib import Path
+from pathlib import Path, PurePath
+import os
 
 config = Config(".env")
 
@@ -36,4 +37,6 @@ DB_RETRY_LIMIT = config("DB_RETRY_LIMIT", cast=int, default=1)
 DB_RETRY_INTERVAL = config("DB_RETRY_INTERVAL", cast=int, default=1)
 
 # File API
-FILE_API_FOLDER = config("FILE_API_FOLDER", cast=str, default=str(Path(__file__).parent.parent / "files"))
+FILE_API_FOLDER = config("FILE_API_FOLDER",
+                         default=Path(__file__).parent.parent.absolute() / "files")
+FILE_API_DEFAULT_BLOCKSIZE = config("FILE_API_DEFAULT_BLOCKSIZE", cast=int, default=2 ** 14)

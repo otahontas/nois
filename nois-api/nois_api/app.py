@@ -10,7 +10,6 @@ routes = [
     Mount("/files", routes=file_api_routes)
 ]
 
-
 def get_app():
     app = Starlette(routes=routes)
     db.init_app(app)
