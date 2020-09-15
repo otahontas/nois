@@ -15,7 +15,7 @@ async def stream_file(request: Request) -> StreamingResponse:
       200:
         description: Return streamed response of single file
       404:
-        description: Requested file didn't exist
+        description: Requested file doesn't exist
     """
 
     filename = request.path_params["filename"]
@@ -60,3 +60,24 @@ async def add_file(request: Request) -> JSONResponse:
                 status_code=400, contents="Couldn't save file to server."
             )
     return JSONResponse({"filename": filename}, status_code=201)
+
+
+async def delete_file(request: Request) -> None:
+    """
+    description: Delete single file by id
+    responses:
+      204:
+        description: Return no content after successful deletion
+      404:
+        description: Requested file doesn't exist
+    """
+
+    filename = request.path_params["filename"]
+    path_to_file = FILE_API_FOLDER / filename
+
+    try:
+        path_to_file.unlink()
+    except FileNotFoundError:
+        raise HTTPException(status_code=404)
+
+    raise HTTPException(status_code=204)

@@ -16,7 +16,9 @@ DB_HOST = config("DB_HOST", default=None)
 DB_PORT = config("DB_PORT", cast=int, default=None)
 DB_DATABASE = "nois_test" if TESTING else config("DB_DATABASE", default=None)
 DB_USER = "nois_test" if TESTING else config("DB_USER", default=None)
-DB_PASSWORD = "nois_test" if TESTING else config("DB_PASSWORD", cast=Secret, default=None)
+DB_PASSWORD = (
+    "nois_test" if TESTING else config("DB_PASSWORD", cast=Secret, default=None)
+)
 DB_DSN = config(
     "DB_DSN",
     cast=make_url,
