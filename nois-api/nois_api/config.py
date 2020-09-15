@@ -48,3 +48,7 @@ FILE_API_FOLDER = config(
 FILE_API_DEFAULT_CHUNK_SIZE = config(
     "FILE_API_DEFAULT_BLOCKSIZE", cast=int, default=1024
 )
+FILE_API_BASE_URL = config("FILE_API_BASE_URL", cast=str, default="/files")
+
+# Graphql API
+GRAPHQL_API_BASE_URL = config("GRAPHQL_API_BASE_URL", cast=str, default="/graphql")
