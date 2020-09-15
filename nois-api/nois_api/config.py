@@ -7,8 +7,9 @@ import os
 
 config = Config(".env")
 
-# Testing env
+# Testing & development variales
 TESTING = config("TESTING", cast=bool, default=False)
+DEBUG = config("DEBUG", cast=bool, default=False)
 
 # Database
 DB_DRIVER = config("DB_DRIVER", default="postgresql")
