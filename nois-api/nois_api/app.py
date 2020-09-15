@@ -1,22 +1,10 @@
-from graphql.execution.executors.asyncio import AsyncioExecutor
 from starlette.applications import Starlette
 from starlette.routing import Route
-from starlette.graphql import GraphQLApp
-from graphene import Schema
 
-from .graphql.queries import Query
-from .graphql.mutations import Mutation
 from .gino import db
+from .graphql import graphql_app
 
-routes = [
-    Route(
-        "/",
-        GraphQLApp(
-            schema=Schema(query=Query, mutation=Mutation),
-            executor_class=AsyncioExecutor,
-        ),
-    )
-]
+routes = [Route("/graphql", graphql_app)]
 
 
 def get_app():
