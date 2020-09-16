@@ -8,4 +8,5 @@
 | 13.9.   | 1,5   | Backend-kirjastoihin tutustumista, rakenteen suunnittelua |
 | 14.9.   | 9     | Backendin rakentamista: graphql, tietokantamodelit, tietokantayhteydet |
 | 15.9.   | 7     | Backendin rakentamista: tiedostojen tallentaminen ja striimaus, testien pystytys|
+| 16.9.   | 3     | Appin kehitystä: ui-kirjaston valinta, ui-kirjaston testailua, expon audio-apin tutkailua |
 | **yht.**|       | | 
