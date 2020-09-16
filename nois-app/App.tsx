@@ -1,31 +1,26 @@
 import React from 'react';
 import * as eva from '@eva-design/eva';
-import { ApplicationProvider, IconRegistry, Layout, Text } from '@ui-kitten/components';
+import { SafeAreaView,  StyleSheet, Platform, StatusBar } from 'react-native';
+import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
 import { default as theme } from './theme.json';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
-import { Button, Icon } from '@ui-kitten/components';
+import Home from "./src/components/Home";
 
-const FacebookIcon = (props) => (
-  <Icon name='facebook' {...props} />
-);
-
-export const LoginButton = () => (
-  <Button accessoryLeft={FacebookIcon}>Login with Facebook</Button>
-);
-
-
-const HomeScreen = () => (
-  <Layout style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-    <Text category='h1'>HOME</Text>
-    <LoginButton />
-  </Layout>
-);
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "white",
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
+  },
+});
 
 const App = () => (
   <>
     <IconRegistry icons={EvaIconsPack} />
     <ApplicationProvider {...eva} theme={{...eva.dark, ...theme}}>
-      <HomeScreen />
+        <SafeAreaView style={styles.safeArea}>
+          <Home />
+        </SafeAreaView>
     </ApplicationProvider>
   </>
 );
