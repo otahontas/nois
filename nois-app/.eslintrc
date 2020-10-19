@@ -3,7 +3,6 @@
     "browser": true,
     "node": true,
     "es6": true,
-    "jest/globals": true
   },
   "extends": [
     "eslint:recommended",
@@ -22,7 +21,7 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
-  "plugins": ["react", "jest", "@typescript-eslint", "import"],
+  "plugins": ["react", "react-native", "@typescript-eslint", "import"],
   "settings": {
     "react": {
       "pragma": "React",
