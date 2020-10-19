@@ -3,7 +3,6 @@ from starlette.schemas import SchemaGenerator
 
 from .api import add_file, stream_file, delete_file
 from ..config import FILE_API_FOLDER
-from pathlib import Path
 
 schemas = SchemaGenerator(
     {"openapi": "3.0.0", "info": {"title": "Nois file API", "version": "1.0"}}

@@ -28,4 +28,5 @@ class Query(ObjectType):
                 ThreadModel.distinct(ThreadModel.id).load(add_message=MessageModel)
             ).all()
         except UndefinedTableError as error:
+            print("error happened ", error)
             return []

@@ -8,7 +8,7 @@ environ["TESTING"] = "TRUE"
 
 @pytest.fixture
 def client():
-    from nois_api.app import db, get_app
+    from nois_api.app import db, get_apppp
 
-    with TestClient(get_app()) as client:
+    with TestClient(get_apppp()) as client:
         yield client

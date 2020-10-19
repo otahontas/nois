@@ -1,8 +1,6 @@
-from graphene import ObjectType, Mutation, String, Boolean, Field, Int
+from graphene import ObjectType, Mutation, String, Field
 from .types import Message, Thread
 from ..gino.models import MessageModel, ThreadModel
-
-from pprint import pprint
 
 
 class CreateMessage(Mutation):
@@ -27,6 +25,6 @@ class CreateThread(Mutation):
         return CreateThread(thread=thread)
 
 
-class Mutation(ObjectType):
+class MessageThreadMutation(ObjectType):
     create_message = CreateMessage.Field()
     create_thread = CreateThread.Field()

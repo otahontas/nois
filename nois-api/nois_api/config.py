@@ -2,8 +2,7 @@ from sqlalchemy.engine.url import URL, make_url
 from starlette.config import Config
 from starlette.datastructures import Secret
 
-from pathlib import Path, PurePath
-import os
+from pathlib import Path
 
 config = Config(".env")
 

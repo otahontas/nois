@@ -1,9 +1,7 @@
-from starlette.endpoints import HTTPEndpoint
 from starlette.requests import Request
 from starlette.responses import JSONResponse, StreamingResponse
 from starlette.exceptions import HTTPException
 from ..config import FILE_API_FOLDER, FILE_API_DEFAULT_CHUNK_SIZE
-from pathlib import Path
 import aiofiles
 from uuid import uuid4
 
@@ -24,14 +22,14 @@ async def stream_file(request: Request) -> StreamingResponse:
     if not path_to_file.exists():
         raise HTTPException(status_code=404)
 
-    async def stream_file(
+    async def stream_file_from_disk(
         path_to_file: str, chunk_size: int = FILE_API_DEFAULT_CHUNK_SIZE
     ):
         async with aiofiles.open(path_to_file, mode="rb") as file:
             while chunk := await file.read(chunk_size):
                 yield chunk
 
-    return StreamingResponse(stream_file(str(path_to_file)))
+    return StreamingResponse(stream_file_from_disk(str(path_to_file)))
 
 
 async def add_file(request: Request) -> JSONResponse:
