@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const App = () => (
+const App: React.FC = () => (
   <>
     <IconRegistry icons={EvaIconsPack} />
     <ApplicationProvider {...eva} theme={{...eva.dark, ...theme}}>
