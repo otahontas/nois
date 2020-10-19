@@ -10,7 +10,8 @@
     "plugin:prettier/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:import/errors",
-    "plugin:import/warnings"
+    "plugin:import/warnings",
+    "plugin:import/typescript"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -27,14 +28,12 @@
       "pragma": "React",
       "version": "detect"
     },
-    "import/resolver": {
-      "node": {
-        "paths": ["src"],
-        "extensions": [".ts", ".tsx", ".js", ".jsx"]
-      }
-    }
   },
   "rules": {
+    "import/named": 0,
+    "import/namespace": 0,
+    "import/default": 0,
+    "import/no-named-as-default-member": 0,
     "import/order": [
       "error",
       {
@@ -52,8 +51,9 @@
           }
         ],
         "pathGroupsExcludedImportTypes": ["builtin"]
-      }
+      },
     ],
+    "semi": "off",
     "@typescript-eslint/semi": ["error"],
     "@typescript-eslint/explicit-function-return-type": 0,
     "@typescript-eslint/explicit-module-boundary-types": 0,
