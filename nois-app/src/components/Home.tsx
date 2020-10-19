@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Alert, StyleSheet } from 'react-native';
 import { Button, Layout, Text, Icon} from '@ui-kitten/components';
 import { Audio } from 'expo-av';
+import * as FileSystem from 'expo-file-system';
 
 const styles = StyleSheet.create({
   container: {
@@ -17,6 +18,10 @@ const MicIcon = (props) => (
 
 const StopIcon = (props) => (
   <Icon {...props} name='stop-circle-outline'/>
+)
+
+const PlayIcon = (props) => (
+  <Icon {...props} name='play-circle-outline'/>
 )
 
 
@@ -47,7 +52,7 @@ const Home = () => {
     },
   };
 
-  const audioModeSettings = {
+  const recordingModeSettings = {
     allowsRecordingIOS: true,
     interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
     playsInSilentModeIOS: true,
@@ -57,14 +62,59 @@ const Home = () => {
     staysActiveInBackground: true,
   }
 
+  const playingModeSettings = {      
+    allowsRecordingIOS: false,
+    interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+    playsInSilentModeIOS: true,
+    playsInSilentLockedModeIOS: true,
+    shouldDuckAndroid: true,
+    interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+    playThroughEarpieceAndroid: false,
+    staysActiveInBackground: true
+  }
+
   const [isRecording, setIsRecording] = useState<boolean>(false);
+  const [isRecorded, setIsRecorded] = useState<boolean>(false);
   const [recording, setRecording] = useState<any>(null);
+  const [sound, setSound] = useState<any>(null);
+
+  const checkAudioPermissions = async () => {
+    const audioPermissions = await Audio.getPermissionsAsync();
+    if (!audioPermissions.granted) {
+      if (!audioPermissions.canAskAgain) {
+        Alert.alert(
+          "Audio recording not possible",
+          "You have denied this app from getting any audio permissions, so recording is not possible",
+          [{ text: "OK" }],
+          { cancelable: false }
+        );
+        return false
+      } else {
+        const request = await Audio.requestPermissionsAsync()
+        if (!request.granted) {
+          Alert.alert(
+            "Audio recording not possible",
+            "Recording messages is not possible if no permissions are granted",
+            [{ text: "OK" }],
+            { cancelable: false }
+          );
+          return false
+        }
+        return true
+      };
+    }
+    return true
+  }
 
   const startRecording = async () => {
+    const permissionsOk = await checkAudioPermissions();
+    console.log("starting, permissions: ", permissionsOk);
+    if (!permissionsOk) return
 
-    await Audio.setAudioModeAsync(audioModeSettings)
+    await Audio.setAudioModeAsync(recordingModeSettings)
 
     const _recording = new Audio.Recording();
+
     try {
       await _recording.prepareToRecordAsync(recordingSettings)
       setRecording(_recording);
@@ -77,75 +127,54 @@ const Home = () => {
   }
   
   const stopRecording = async () => {
+    const permissionsOk = await checkAudioPermissions();
+    if (!permissionsOk) return
     try {
       await recording.stopAndUnloadAsync();
     } catch (error) {
       console.error("error while stopping recording:", error);
     }
+    const info = await FileSystem.getInfoAsync(recording.getURI());
+    console.log(`FILE INFO: ${JSON.stringify(info)}`);
+    await Audio.setAudioModeAsync(playingModeSettings)
+    const { sound: _sound } = await recording.createNewLoadedSoundAsync(
+      {
+        isLooping: true,
+        isMuted: false,
+        volume: 1.0,
+        rate: 1.0,
+        shouldCorrectPitch: true,
+      }
+    );
+    setSound(_sound);
     setIsRecording(false);
+    setIsRecorded(true);
   }
 
-  // Add listening possibility after rec
-
-  /*   if (!audioPermissions.granted) { */
-  /*     if (!audioPermissions.canAskAgain) { */
-  /*       Alert.alert( */
-  /*         "Audio recording not possible", */
-  /*         "You have denied this app from getting any audio permissions, so recording is not possible", */
-  /*         [{ text: "OK" }], */
-  /*         { cancelable: false } */
-  /*       ); */
-  /*     } else { */
-  /*       const request = await Audio.requestPermissionsAsync() */
-  /*       if (!request.granted) { */
-  /*         Alert.alert( */
-  /*           "Audio recording not possible", */
-  /*           "Recording messages is not possible if no permissions are granted", */
-  /*           [{ text: "OK" }], */
-  /*           { cancelable: false } */
-  /*         ); */
-  /*       } */
-  /*       return request.granted; */
-  /*     }; */
-  /*   return audioPermissions.granted; */
-  /*   } */
-  /* } */
-
-
-
-  /* const startRecording = async () => { */
-  /*   console.log("starting") */
-  /*   const permissionsOk = await checkAudioPermissions() */
-  /*   console.log(permissionsOk) */
-  /*   if (!permissionsOk) return */
-      
-  /*   try { */
-  /*     await recordingObject.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY); */
-  /*     await recordingObject.startAsync(); */
-  /*   } catch (error) { */
-  /*     console.log("error:", error); */
-  /*   } */
-  /*   setRecording(true); */
-  /*   console.log("rec status", recording) */
-  /* }; */
-
-  /* const stopRecording = async () => { */
-  /*   console.log("stopping") */
-  /*   try { */
-  /*     await recordingObject.stopAndUnloadAsync(); */
-  /*   } catch (error) { */
-  /*   } */
-  /*   setRecording(false); */
-  /*   console.log("rec status", recording) */
-  /* } */
+  const previewRecording = async () => {
+    try {
+      await sound.playAsync();
+    } catch (error) {
+      console.error("Error happened while playing file", error)
+    }
+  }
 
   return (
     <Layout style={styles.container}>
-        <Button size="giant" 
-          accessoryLeft={isRecording ? StopIcon : MicIcon} 
-          onPressIn={startRecording}
-          onPressOut={stopRecording}
-      />
+      {isRecorded
+        ? <>
+            <Text>Preview recording?</Text>
+            <Button size="giant" 
+              accessoryLeft={PlayIcon} 
+              onPress={previewRecording}
+            />
+          </>
+        : <Button size="giant" 
+            accessoryLeft={isRecording ? StopIcon : MicIcon} 
+            onPressIn={startRecording}
+            onPressOut={stopRecording}
+          />
+      }
     </Layout>
   );
 };
