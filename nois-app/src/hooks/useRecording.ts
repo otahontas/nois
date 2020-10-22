@@ -6,17 +6,19 @@ const useRecording = () => {
   const [status, setStatus] = useState<string>("idle");
   const [error, setError] = useState<string>("");
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
-  const [url, setUrl] = useState<string | null>(null)
+  const [url, setUrl] = useState<string | null>(null);
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const recordingSettings = Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY;
 
   /**
-   * Ask permissions for recording, load recorder into memory and prepare it for
+   * Check permissions for recording, load recorder into memory and prepare it for
    * recording.
    */
   const prepare = async () => {
     setStatus("preparing");
     const recordingToPrepare = new Audio.Recording();
+    const audioPermissions = await Audio.getPermissionsAsync();
+    if (!audioPermissions.granted) return;
     const { canRecord } = await recordingToPrepare.prepareToRecordAsync(
       recordingSettings
     );
@@ -30,8 +32,8 @@ const useRecording = () => {
     try {
       const { canRecord, preparedRecording } = await prepare();
       if (!canRecord) {
-        setStatus("error")
-        setError("Recording is not possible for some unknown reason")
+        setStatus("error");
+        setError("Recording is not possible for some unknown reason");
         return;
       }
       setStatus("recording");
@@ -50,14 +52,14 @@ const useRecording = () => {
     try {
       if (!recording) {
         setStatus("error");
-        setError("Stopping is not possible since there is no recording available.")
-        return
+        setError("Stopping is not possible since there is no recording available.");
+        return;
       }
       await recording.stopAndUnloadAsync();
       setStatus("recorded");
       const { sound: recordedSound } = await recording.createNewLoadedSoundAsync();
       setSound(recordedSound);
-      setUrl(recording.getURI())
+      setUrl(recording.getURI());
       setRecording(null);
     } catch (error) {
       setStatus("error");
@@ -71,10 +73,10 @@ const useRecording = () => {
   const preview = async () => {
     try {
       if (!sound) {
-        console.log("no sound :(")
+        console.log("no sound :(");
         setStatus("error");
-        setError("There is no message to play")
-        return
+        setError("There is no message to play");
+        return;
       }
       await sound.replayAsync();
     } catch (error) {
@@ -92,8 +94,8 @@ const useRecording = () => {
     setRecording(null);
     setUrl(null);
     setSound(null);
-  }
-  return [start, stop, preview, status, error, url, reset];
+  };
+  return [start, stop, preview, reset, status, error, url, reset];
 };
 
 export default useRecording;
