@@ -2,33 +2,51 @@ import { useMachine } from "@xstate/react";
 import { Audio } from "expo-av";
 import { Machine, assign } from "xstate";
 
+/**
+ * State machine for hook and its type definitions
+ */
+
+type RecorderEvent =
+  | { type: "PERMISSIONS_GIVEN" }
+  | { type: "PERMISSIONS_DENIED" }
+  | { type: "PERMISSIONS_AND_ASKING_AGAIN_DENIED" }
+  | { type: "REJECT"; error: string }
+  | { type: "START"; recording: Audio.Recording }
+  | { type: "STOP"; sound: Audio.Sound; localUrl: string }
+  | { type: "RESET" };
+
+interface RecorderContext {
+  error: string;
+  recording: Audio.Recording | null;
+  sound: Audio.Sound | null;
+  localUrl: string;
+}
+
 const context = {
-  error: null,
+  error: "",
   recording: null,
   sound: null,
-  localUrl: null,
+  localUrl: "",
 };
 
 const REJECT = {
   target: "rejected",
   actions: "setError",
 };
-
 const START = {
   target: "recording",
   actions: "setRecording",
 };
-
 const STOP = {
   target: "recorded",
-  actions: ["setRecording", "setSound", "setLocalUrl"],
+  actions: ["resetRecording", "setSound", "setLocalUrl"],
 };
 const RESET = {
   target: "idle",
   actions: "reset",
 };
 
-const recorderMachine = Machine(
+const recorderMachine = Machine<RecorderContext, RecorderEvent>(
   {
     id: "recorder",
     initial: "idle",
@@ -67,15 +85,24 @@ const recorderMachine = Machine(
   },
   {
     actions: {
-      setError: assign({ error: (context, event) => event.error }),
-      setRecording: assign({ recording: (context, event) => event.recording }),
-      setSound: assign({ sound: (context, event) => event.sound }),
-      setLocalUrl: assign({ localUrl: (context, event) => event.localUrl }),
-      reset: assign({ error: null, recording: null, sound: null, localUrl: null }),
+      setError: assign({ error: (_context, event) => event.error }),
+      setRecording: assign({ recording: (_context, event) => event.recording }),
+      setSound: assign({ sound: (_context, event) => event.sound }),
+      setLocalUrl: assign({ localUrl: (_context, event) => event.localUrl }),
+      reset: assign({
+        error: (_context, _event) => "",
+        recording: (_context, _event) => null,
+        sound: (_context, __event) => null,
+        localUrl: (_context, _event) => "",
+      }),
+      resetRecording: assign({ recording: (_context, _event) => null }),
     },
   }
 );
 
+/**
+ * Hook for recording audio from user
+ */
 const useRecording = () => {
   const [state, send] = useMachine(recorderMachine);
 
@@ -127,11 +154,12 @@ const useRecording = () => {
   const stop = async () => {
     try {
       const { recording } = state.context;
-      if (!recording) return;
-      await recording.stopAndUnloadAsync();
-      const { sound } = await recording.createNewLoadedSoundAsync();
-      const localUrl = recording.getURI();
-      send({ type: "STOP", recording: null, sound, localUrl });
+      if (recording) {
+        await recording.stopAndUnloadAsync();
+        const { sound } = await recording.createNewLoadedSoundAsync();
+        const localUrl = recording.getURI() ?? "";
+        send({ type: "STOP", sound, localUrl });
+      }
     } catch (error) {
       send({ type: "REJECT", error: error.message });
     }
@@ -143,14 +171,16 @@ const useRecording = () => {
   const preview = async () => {
     try {
       const { sound } = state.context;
-      await sound.replayAsync();
+      if (sound) {
+        await sound.replayAsync();
+      }
     } catch (error) {
       send({ type: "REJECT", error: error.message });
     }
   };
 
   /**
-   * Reset everything to basic state
+   * Reset everything
    */
   const reset = async () => send("RESET");
 
