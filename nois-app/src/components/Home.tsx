@@ -1,9 +1,9 @@
 import React from "react";
 
-import { Button, Layout, Icon, Text } from "@ui-kitten/components";
+import { Button, Layout, Icon, Text, IconProps } from "@ui-kitten/components";
 import { StyleSheet } from "react-native";
 
-import useRecording from "../hooks/useRecording";
+import useRecorder from "../hooks/useRecorder";
 
 const styles = StyleSheet.create({
   container: {
@@ -13,18 +13,28 @@ const styles = StyleSheet.create({
   },
 });
 
-const MicIcon = props => <Icon {...props} name="mic-outline" />;
+const MicIcon = (props: IconProps) => <Icon {...props} name="mic-outline" />;
 
-const StopIcon = props => <Icon {...props} name="stop-circle-outline" />;
+const StopIcon = (props: IconProps) => <Icon {...props} name="stop-circle-outline" />;
 
-const PlayIcon = props => <Icon {...props} name="play-circle-outline" />;
+const PlayIcon = (props: IconProps) => <Icon {...props} name="play-circle-outline" />;
 
-const Home = () => {
-  const [start, stop, preview, reset, status] = useRecording();
+const Recorder = () => {
+  const { start, stop, preview, reset, status } = useRecorder();
+  console.log(status);
 
-  return (
-    <Layout style={styles.container}>
-      {status === "recorded" ? (
+  switch (status) {
+    case "permissionsAndAskingAgainDenied":
+      return (
+        <Text appearance="alternative" status="basic">
+          Recording is not possible, since you have denied this app from asking
+          permissions to use your microphone. Maybe allow microphone usage in settings?
+        </Text>
+        // TODO: Link to settings here
+        // TODO: Reload app after setting microphone
+      );
+    case "recorded":
+      return (
         <>
           <Text appearance="alternative" category="h4" status="primary">
             Preview recording below
@@ -36,14 +46,23 @@ const Home = () => {
           <Text>Insert form here</Text>
           <Button onPress={reset}>Cancel</Button>
         </>
-      ) : (
+      );
+    default:
+      return (
         <Button
           size="giant"
           accessoryLeft={status === "recording" ? StopIcon : MicIcon}
           onPressIn={start}
           onPressOut={stop}
         />
-      )}
+      );
+  }
+};
+
+const Home = () => {
+  return (
+    <Layout style={styles.container}>
+      <Recorder />
     </Layout>
   );
 };
