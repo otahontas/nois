@@ -13,6 +13,7 @@
     "@react-navigation/stack": "^5.9.0",
     "@ui-kitten/components": "^5.0.0",
     "@ui-kitten/eva-icons": "^5.0.0",
+    "@xstate/react": "^1.0.1",
     "expo": "~38.0.8",
     "expo-av": "~8.2.1",
     "expo-file-system": "~9.0.1",

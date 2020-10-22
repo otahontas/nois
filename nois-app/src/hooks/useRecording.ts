@@ -1,28 +1,99 @@
-import { useState } from "react";
-
+import { useMachine } from "@xstate/react";
 import { Audio } from "expo-av";
+import { Machine, assign } from "xstate";
+
+const context = {
+  error: null,
+  recording: null,
+  sound: null,
+  localUrl: null,
+};
+
+const REJECT = {
+  target: "rejected",
+  actions: "setError",
+};
+
+const START = {
+  target: "recording",
+  actions: "setCurrentRecording",
+};
+
+const STOP = {
+  target: "recorded",
+  actions: ["setRecording", "setSound", "setUrl"],
+};
+const RESET = {
+  target: "idle",
+  actions: "reset",
+};
+
+const recorderMachine = Machine(
+  {
+    id: "recorder",
+    initial: "idle",
+    context,
+    states: {
+      idle: {
+        on: {
+          PERMISSIONS_DENIED: "idle",
+          PERMISSIONS_AND_ASKING_AGAIN_DENIED: "permissionAndAskingAgainDenied",
+          START,
+          REJECT,
+          RESET,
+        },
+      },
+      recording: {
+        on: {
+          STOP,
+          REJECT,
+          RESET,
+        },
+      },
+      recorded: {
+        on: {
+          REJECT,
+          RESET,
+        },
+      },
+      permissionAndAskingDenied: {},
+    },
+  },
+  {
+    actions: {
+      setError: assign({ error: (context, event) => event.error }),
+      setRecording: assign({ recording: (context, event) => event.recording }),
+      setSound: assign({ sound: (context, event) => event.sound }),
+      setLocalUrl: assign({ localUrl: (context, event) => event.localUrl }),
+      reset: assign({ error: null, recording: null, sound: null, localUrl: null }),
+    },
+  }
+);
 
 const useRecording = () => {
-  const [status, setStatus] = useState<string>("idle");
-  const [error, setError] = useState<string>("");
-  const [recording, setRecording] = useState<Audio.Recording | null>(null);
-  const [url, setUrl] = useState<string | null>(null);
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
-  const recordingSettings = Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY;
+  const [state, send] = useMachine(recorderMachine);
 
   /**
    * Check permissions for recording, load recorder into memory and prepare it for
    * recording.
    */
   const prepare = async () => {
-    setStatus("preparing");
-    const recordingToPrepare = new Audio.Recording();
     const audioPermissions = await Audio.getPermissionsAsync();
-    if (!audioPermissions.granted) return;
-    const { canRecord } = await recordingToPrepare.prepareToRecordAsync(
-      recordingSettings
-    );
-    return { canRecord, preparedRecording: recordingToPrepare };
+    if (!audioPermissions.granted) {
+      const stateChange = !audioPermissions.canAskAgain
+        ? "PERMISSIONS_AND_ASKING_AGAIN_DENIED"
+        : "PERMISSIONS_DENIED";
+      send(stateChange);
+      return;
+    }
+    const recording = new Audio.Recording();
+    try {
+      await recording.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
+      return recording;
+    } catch (error) {
+      send({ type: "REJECT", error: error.message });
+      return;
+    }
   };
 
   /**
@@ -30,18 +101,12 @@ const useRecording = () => {
    */
   const start = async () => {
     try {
-      const { canRecord, preparedRecording } = await prepare();
-      if (!canRecord) {
-        setStatus("error");
-        setError("Recording is not possible for some unknown reason");
-        return;
-      }
-      setStatus("recording");
-      await preparedRecording.startAsync();
-      setRecording(preparedRecording);
+      const recording = await prepare();
+      if (!recording) return;
+      await recording.startAsync();
+      send({ type: "START", recording });
     } catch (error) {
-      setStatus("error");
-      setError(error.message);
+      send({ type: "REJECT", error: error.message });
     }
   };
 
@@ -50,20 +115,13 @@ const useRecording = () => {
    */
   const stop = async () => {
     try {
-      if (!recording) {
-        setStatus("error");
-        setError("Stopping is not possible since there is no recording available.");
-        return;
-      }
+      const { recording } = state.context;
       await recording.stopAndUnloadAsync();
-      setStatus("recorded");
-      const { sound: recordedSound } = await recording.createNewLoadedSoundAsync();
-      setSound(recordedSound);
-      setUrl(recording.getURI());
-      setRecording(null);
+      const { sound } = await recording.createNewLoadedSoundAsync();
+      const localUrl = recording.getURI();
+      send({ type: "STOP", recording: null, sound, localUrl });
     } catch (error) {
-      setStatus("error");
-      setError(error);
+      send({ type: "REJECT", error: error.message });
     }
   };
 
@@ -72,30 +130,27 @@ const useRecording = () => {
    */
   const preview = async () => {
     try {
-      if (!sound) {
-        console.log("no sound :(");
-        setStatus("error");
-        setError("There is no message to play");
-        return;
-      }
+      const { sound } = state.context;
       await sound.replayAsync();
     } catch (error) {
-      setStatus("error");
-      setError(error);
+      send({ type: "REJECT", error: error.message });
     }
   };
 
   /**
    * Reset everything to basic state
    */
-  const reset = async () => {
-    setStatus("idle");
-    setError("");
-    setRecording(null);
-    setUrl(null);
-    setSound(null);
+  const reset = async () => send("RESET");
+
+  return {
+    start,
+    stop,
+    preview,
+    reset,
+    status: state.value,
+    error: state.context.error,
+    localUrl: state.context.localUrl,
   };
-  return [start, stop, preview, reset, status, error, url, reset];
 };
 
 export default useRecording;
