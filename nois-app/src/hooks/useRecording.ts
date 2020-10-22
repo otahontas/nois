@@ -16,12 +16,12 @@ const REJECT = {
 
 const START = {
   target: "recording",
-  actions: "setCurrentRecording",
+  actions: "setRecording",
 };
 
 const STOP = {
   target: "recorded",
-  actions: ["setRecording", "setSound", "setUrl"],
+  actions: ["setRecording", "setSound", "setLocalUrl"],
 };
 const RESET = {
   target: "idle",
@@ -36,6 +36,7 @@ const recorderMachine = Machine(
     states: {
       idle: {
         on: {
+          PERMISSIONS_GIVEN: "idle",
           PERMISSIONS_DENIED: "idle",
           PERMISSIONS_AND_ASKING_AGAIN_DENIED: "permissionAndAskingAgainDenied",
           START,
@@ -56,7 +57,12 @@ const recorderMachine = Machine(
           RESET,
         },
       },
-      permissionAndAskingDenied: {},
+      rejected: {
+        on: {
+          RESET,
+        },
+      },
+      permissionAndAskingAgainDenied: {},
     },
   },
   {
@@ -78,14 +84,19 @@ const useRecording = () => {
    * recording.
    */
   const prepare = async () => {
-    const audioPermissions = await Audio.getPermissionsAsync();
-    if (!audioPermissions.granted) {
-      const stateChange = !audioPermissions.canAskAgain
-        ? "PERMISSIONS_AND_ASKING_AGAIN_DENIED"
-        : "PERMISSIONS_DENIED";
-      send(stateChange);
+    const { granted, canAskAgain } = await Audio.getPermissionsAsync();
+
+    if (!granted) {
+      if (!canAskAgain) {
+        send("PERMISSIONS_AND_ASKING_AGAIN_DENIED");
+      } else {
+        const { granted } = await Audio.requestPermissionsAsync();
+        const stateChange = granted ? "PERMISSIONS_GIVEN" : "PERMISSIONS_DENIED";
+        send(stateChange);
+      }
       return;
     }
+
     const recording = new Audio.Recording();
     try {
       await recording.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
