@@ -38,7 +38,7 @@ const recorderMachine = Machine(
         on: {
           PERMISSIONS_GIVEN: "idle",
           PERMISSIONS_DENIED: "idle",
-          PERMISSIONS_AND_ASKING_AGAIN_DENIED: "permissionAndAskingAgainDenied",
+          PERMISSIONS_AND_ASKING_AGAIN_DENIED: "permissionsAndAskingAgainDenied",
           START,
           REJECT,
           RESET,
@@ -62,7 +62,7 @@ const recorderMachine = Machine(
           RESET,
         },
       },
-      permissionAndAskingAgainDenied: {},
+      permissionsAndAskingAgainDenied: {},
     },
   },
   {
@@ -127,6 +127,7 @@ const useRecording = () => {
   const stop = async () => {
     try {
       const { recording } = state.context;
+      if (!recording) return;
       await recording.stopAndUnloadAsync();
       const { sound } = await recording.createNewLoadedSoundAsync();
       const localUrl = recording.getURI();
