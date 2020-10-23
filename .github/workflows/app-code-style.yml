@@ -2,8 +2,8 @@ name: "App: Code style check"
 on:
   push:
     paths:
-      - '!nois-app/**/*.md'
       - 'nois-app/**'
+      - '!nois-app/**/*.md'
 
 jobs:
   code_style_check:

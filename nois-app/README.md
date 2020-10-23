@@ -2,8 +2,8 @@
 
 This folder contains source for Nois application, which is mainly built with Typescript, React Native / Expo, Apollo GraphQL -client and UI Kitten -framework.
 
-[![Code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
-[![Code style check](https://github.com/otahontas/nois/workflows/App:%20Code%20style%20check/badge.svg)](https://github.com/otahontas/nois/actions?query=workflow%3A%22App%3A+Code+style+check%22)
+[![Code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![App: Code style check](https://github.com/otahontas/nois/workflows/App:%20Code%20style%20check/badge.svg)](https://github.com/otahontas/nois/actions?query=workflow%3A%22App%3A+Code+style+check%22)
 
 ## Installation
 
