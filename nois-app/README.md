@@ -10,6 +10,7 @@ This folder contains source for Nois application, which is mainly built with Typ
 Prerequisites:
 - [Expo](https://expo.io/), 3.28.0+
 - [Yarn](https://yarnpkg.com/), 1.22.10+
+- [Node](https://nodejs.org/en/), 14+
 
 Install project by cloning the repo and running `yarn install`.
 

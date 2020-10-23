@@ -8,15 +8,15 @@ jobs:
   build:
     name: App code style check
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: ["14"]
     steps:
       - uses: actions/checkout@v2
       - name: Setup node ${{ matrix.node }}
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node }}
+          node-version: "14"
+      - name: Cd to correct folder
+        run: |
+          cd nois-app
       - name: Install dependencies from lockfile
         run: |
           yarn install --frozen-lockfile
