@@ -93,6 +93,22 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 marker = "sys_platform == \"win32\""
 
 [[package]]
+name = "edgedb"
+version = "0.11.0"
+description = "EdgeDB Python driver"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+dev = ["Cython (0.29.14)", "pytest (>=3.6.0)", "sphinx (>=2.3.1,<2.4.0)", "sphinxcontrib-asyncio (>=0.2.0,<0.3.0)", "sphinx-rtd-theme (>=0.4.3,<0.5.0)", "pycodestyle (>=2.6.0,<2.7.0)", "pyflakes (>=2.2.0,<2.3.0)", "flake8 (>=3.8.1,<3.9.0)", "uvloop (>=0.14.0)"]
+docs = ["sphinx (>=2.3.1,<2.4.0)", "sphinxcontrib-asyncio (>=0.2.0,<0.3.0)", "sphinx-rtd-theme (>=0.4.3,<0.5.0)"]
+test = ["pycodestyle (>=2.6.0,<2.7.0)", "pyflakes (>=2.2.0,<2.3.0)", "flake8 (>=3.8.1,<3.9.0)", "uvloop (>=0.14.0)"]
+
+[package.dependencies]
+typing-extensions = ">=3.7.4,<3.8.0"
+
+[[package]]
 name = "flake8"
 version = "3.8.4"
 description = "the modular source code checker: pep8 pyflakes and co"
@@ -331,7 +347,7 @@ python-versions = ">=3.6.1"
 [metadata]
 lock-version = "1.0"
 python-versions = "^3.8"
-content-hash = "204042d4e3cdfd9603525fd7cd9db1818f33c7c05a6479acd9cd50acea964860"
+content-hash = "cab8ced560b939e7823e3c07826e71f00bbd6851381953dc9b63c1ba786d97dd"
 
 [metadata.files]
 aiofiles = [
@@ -364,6 +380,18 @@ click = [
 colorama = [
     {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
     {file = "colorama-0.4.4.tar.gz", hash = "sha256:5941b2b48a20143d2267e95b1c2a7603ce057ee39fd88e7329b0c292aa16869b"},
+]
+edgedb = [
+    {file = "edgedb-0.11.0-cp36-cp36m-macosx_10_14_x86_64.whl", hash = "sha256:8559a6e5081d799715306a605abca6c1b7c2d87fdefe372b933b0cedb2a19a56"},
+    {file = "edgedb-0.11.0-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:84f24ebcddb933b1acc6c3ef0fc48018691d405be31dc75e59a7baa27f34c1d2"},
+    {file = "edgedb-0.11.0-cp36-cp36m-win_amd64.whl", hash = "sha256:b724fab2658af25663bd2132f152e94304dc87a070e8650b188d9bbee0c77a65"},
+    {file = "edgedb-0.11.0-cp37-cp37m-macosx_10_14_x86_64.whl", hash = "sha256:393c0116bfa775274a771ae61d4cc6d2c8a7025220354d98e802861f9a285c63"},
+    {file = "edgedb-0.11.0-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:c8a2bd479a94eb0b05138e1c519abcfebc54ec32b3f0f97708c96dc3805ef371"},
+    {file = "edgedb-0.11.0-cp37-cp37m-win_amd64.whl", hash = "sha256:741b856c88f0c7bcceb3f346eccc892b32297d055321fb3252ab194e53c2a7fc"},
+    {file = "edgedb-0.11.0-cp38-cp38-macosx_10_14_x86_64.whl", hash = "sha256:704089b36a328fe828f939e1d2e0ba26494c312fbe52678a9e395dfd2df5c711"},
+    {file = "edgedb-0.11.0-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:35994f5f4d2c37a94dbcef06ed8513fff62b26d93ee189e3260c2f6f2b39e1bc"},
+    {file = "edgedb-0.11.0-cp38-cp38-win_amd64.whl", hash = "sha256:1dad1cd8249077477fd60092e34f137eb3e9a0ab262e3eb18e0b1fe5e14a7018"},
+    {file = "edgedb-0.11.0.tar.gz", hash = "sha256:8c61fa5b48244a5599552c8268bc576fb87a6ccca78936bbff26041020655d71"},
 ]
 flake8 = [
     {file = "flake8-3.8.4-py2.py3-none-any.whl", hash = "sha256:749dbbd6bfd0cf1318af27bf97a14e28e5ff548ef8e5b1566ccfb25a11e7c839"},
