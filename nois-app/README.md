@@ -33,3 +33,4 @@ Install project by cloning the repo and running `yarn install`.
   - Project uses prettier and eslint with some plugins (such as import sorting, typescript) to ensure a consistent style accross app codebase.
   - See `.prettierrc` and `.eslintrc` for specific configurations.
 - Tests are also run in CI-pipeline with Github Actions
+- Jest-tests are not yet configured
