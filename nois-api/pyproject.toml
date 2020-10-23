@@ -22,6 +22,7 @@ pytest = "^6.0.2"
 requests = "^2.24.0"
 alembic = "^1.4.3"
 psycopg2-binary = "^2.8.6"
+flake8 = "^3.8.4"
 
 [build-system]
 requires = ["poetry>=0.12"]
