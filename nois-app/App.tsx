@@ -4,7 +4,7 @@ import { SafeAreaView,  StyleSheet, Platform, StatusBar } from 'react-native';
 import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
 import { default as theme } from './theme.json';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
-import Home from "./src/components/Home";
+import Home from "./src/screens/Home";
 
 const styles = StyleSheet.create({
   safeArea: {
