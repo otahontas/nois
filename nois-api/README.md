@@ -12,6 +12,11 @@ GraphQL API for the anonymous voice message board app Nois.
 
 ## Installation, running, migrations
 - Requirements: `python 3.8+` and `poetry`
-- Run `poetry install` to install all dependencies and dev-dependencies
+- Run `poetry install` to install all dependencies
 - Run `poetry run uvicorn nois_api.main:app` to launch server. Add `--reload` flag for hot reloading.
 - For migrations see [migrations/README](migrations/README.md)
+
+## Tests
+
+- Code errors can be checked with `poetry run flake8 .`
+- Code style error can be checked with `poetry run black .`
