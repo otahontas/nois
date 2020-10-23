@@ -1,10 +1,15 @@
-from graphql.execution.executors.asyncio import AsyncioExecutor
-from starlette.graphql import GraphQLApp
-from graphene import Schema
-from .queries import Query
-from .mutations import MessageThreadMutation
+from ariadne import make_executable_schema
+from ariadne import load_schema_from_path
+from ariadne.asgi import GraphQL
+from pathlib import Path
 
-graphql_app = GraphQLApp(
-    schema=Schema(query=Query, mutation=MessageThreadMutation),
-    executor_class=AsyncioExecutor,
-)
+from nois_api.config import DEBUG
+from nois_api.graphql.resolvers import query
+
+schema_file = Path(__file__).parent / "schema.graphql"
+
+type_defs = load_schema_from_path(str(schema_file))
+
+schema = make_executable_schema(type_defs, query)
+
+graphql_app = GraphQL(schema, debug=DEBUG)

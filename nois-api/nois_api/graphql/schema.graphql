@@ -1,0 +1,22 @@
+type Message {
+  id: ID!
+  title: String!
+  recordingUrl: String!
+}
+
+type Thread {
+  id: ID!
+  title: String!
+  messages: [Message]!
+}
+
+type Query {
+  thread(id: ID!): Message!
+  allThreads: [Thread]!
+  message(id: ID!): Message!
+  allMessages: [Message]!
+}
+
+schema {
+  query: Query
+}

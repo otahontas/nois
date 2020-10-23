@@ -1,26 +1,10 @@
-from ariadne import QueryType, make_executable_schema
-from ariadne.asgi import GraphQL
 from starlette.applications import Starlette
 from starlette.routing import Route
+from nois_api.graphql import graphql_app
 
-from .config import DEBUG
+from nois_api.config import DEBUG
 
-type_defs = """
-    type Query {
-        hello: String!
-    }
-"""
-query = QueryType()
-
-
-@query.field("hello")
-def resolve_hello(*_):
-    return "Hello world!"
-
-
-schema = make_executable_schema(type_defs, query)
-
-routes = [Route("/graphql", GraphQL(schema, debug=DEBUG))]
+routes = [Route("/graphql", graphql_app)]
 
 
 def get_app():
