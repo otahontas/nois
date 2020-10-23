@@ -3,8 +3,7 @@
   "scripts": {
     "start": "expo start",
     "lint": "eslint './src/**/*.{ts,tsx}'",
-    "lint:fix": "eslint --fix './src/**/*.{ts,tsx}'",
-    "concurrently": "concurrently"
+    "lint:fix": "eslint --fix './src/**/*.{ts,tsx}'"
   },
   "dependencies": {
     "@eva-design/eva": "^2.0.0",
@@ -36,21 +35,14 @@
     "@types/react-native": "~0.62.13",
     "@typescript-eslint/eslint-plugin": "^4.5.0",
     "@typescript-eslint/parser": "^4.5.0",
-    "concurrently": "^5.3.0",
     "eslint": "^7.11.0",
     "eslint-config-prettier": "^6.13.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.21.4",
     "eslint-plugin-react-native": "^3.10.0",
-    "husky": "^4.3.0",
     "prettier": "^2.1.2",
     "typescript": "~3.9.5"
   },
-  "private": true,
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn run concurrently \"yarn lint\" "
-    }
-  }
+  "private": true
 }
