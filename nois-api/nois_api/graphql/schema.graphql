@@ -1,22 +1,28 @@
+scalar DateTime
+scalar Upload
+
 type Message {
   id: ID!
   title: String!
   recordingUrl: String!
+  createdAt: DateTime!
 }
 
-type Thread {
-  id: ID!
+input CreateMessageInput {
   title: String!
-  messages: [Message]!
+  # recording: Upload!
 }
 
 type Query {
-  thread(id: ID!): Message!
-  allThreads: [Thread]!
   message(id: ID!): Message!
   allMessages: [Message]!
 }
 
+type Mutation {
+  createMessage(message: CreateMessageInput): Message
+}
+
 schema {
   query: Query
+  mutation: Mutation
 }

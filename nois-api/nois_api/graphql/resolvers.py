@@ -1,91 +1,43 @@
-from ariadne import QueryType
+from ariadne import QueryType, MutationType
+import datetime
+import logging
 
 query = QueryType()
+mutation = MutationType()
 
-m1 = {
-    "id": "1234",
-    "title": "Jou jou jou",
-    "recordingUrl": "http://example.com/jeaah"
-}
-m2 = {
-    "id": "1233",
-    "title": "Jea jea jea",
-    "recordingUrl": "http://example.com/jouuu"
-}
-
-messages = [m1,m2]
+messages = [
+    {
+        "id": "1",
+        "title": "Eka",
+        "recordingUrl": "https://jees.com/eka",
+        "createdAt": "2017-01-01T00:00:00",
+    },
+    {
+        "id": "2",
+        "title": "Toka",
+        "recordingUrl": "https://jees.com/toka",
+        "createdAt": "2017-02-01T00:00:00",
+    },
+]
 
 
 @query.field("message")
-async def resolve_message(*_, id):
-    if id == "1234": 
-        return m1
-    if id == "1233":
-        return m2
-    return None
+async def resolve_message(*args, id):
+    return next(message for message in messages if message["id"] == id)
 
 
-# from graphene import ObjectType, Field, List, String
-# from asyncpg.exceptions import UndefinedTableError
-
-# from .types import Message, Thread
-
-# from ..gino.models import MessageModel, ThreadModel
+@query.field("allMessages")
+async def resolve_all_messages(*args):
+    return messages
 
 
-# class Query(ObjectType):
-#     message = Field(Message, id=String(required=True))
-#     messages = List(Message)
-#     thread = Field(Thread, id=String(required=True))
-#     threads = List(Thread)
-
-#     async def resolve_message(root, info, id):
-#         return await MessageModel.get(id)
-
-#     async def resolve_messages(root, info):
-#         return await MessageModel.query.gino.all()
-
-#     async def resolve_thread(root, info, id):
-#         return await ThreadModel.get(id)
-
-#     async def resolve_threads(root, info):
-#         query = ThreadModel.outerjoin(MessageModel).select()
-#         try:
-#             return await query.gino.load(
-#                 ThreadModel.distinct(ThreadModel.id).load(add_message=MessageModel)
-#             ).all()
-#         except UndefinedTableError as error:
-#             print("error happened ", error)
-#             return []
-
-
-# from graphene import ObjectType, Mutation, String, Field
-# from .types import Message, Thread
-# from ..gino.models import MessageModel, ThreadModel
-
-
-# class CreateMessage(Mutation):
-#     class Arguments:
-#         content_filename = String(required=True)
-#         thread_id = String(required=True)
-
-#     message = Field(Message)
-
-#     async def mutate(root, info, content_filename, thread_id):
-#         message = await MessageModel.create(
-#             content_filename=content_filename, thread_id=thread_id
-#         )
-#         return CreateMessage(message=message)
-
-
-# class CreateThread(Mutation):
-#     thread = Field(Thread)
-
-#     async def mutate(root, info):
-#         thread = await ThreadModel.create()
-#         return CreateThread(thread=thread)
-
-
-# class MessageThreadMutation(ObjectType):
-#     create_message = CreateMessage.Field()
-#     create_thread = CreateThread.Field()
+@mutation.field("createMessage")
+async def resolve_create_message(_, info, message):
+    new_message = {
+        "id": str(len(messages) + 1),
+        "title": message["title"],
+        "recordingUrl": "https://jees.com/uusi",
+        "createdAt": "2017-01-01T00:00:00"
+    }
+    messages.append(new_message)
+    return new_message
