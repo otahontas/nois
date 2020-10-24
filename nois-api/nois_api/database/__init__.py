@@ -34,6 +34,10 @@ async def get_connection() -> AsyncGenerator[AsyncIOConnection, None]:
         await pool.release(connection)
 
 
+async def get_pool():
+    return await pool
+
+
 max_tries = 60 * 5  # 5 minutes
 wait_seconds = 1
 schema_file = Path(__file__).parent / "schema.esdl"

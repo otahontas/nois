@@ -10,9 +10,10 @@ routes = [Route("/graphql", graphql_app), Mount("/api", routes=api_routes)]
 
 
 def get_app():
-    app = Starlette(routes=routes, 
-                    debug=DEBUG,
-                    on_startup=[create_pool, init_db],
-                    on_shutdown=[close_pool]
-                    )
+    app = Starlette(
+        routes=routes,
+        debug=DEBUG,
+        on_startup=[create_pool, init_db],
+        on_shutdown=[close_pool],
+    )
     return app
