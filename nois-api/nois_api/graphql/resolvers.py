@@ -1,6 +1,4 @@
 from ariadne import QueryType, MutationType
-import datetime
-import logging
 
 query = QueryType()
 mutation = MutationType()
@@ -37,7 +35,7 @@ async def resolve_create_message(_, info, message):
         "id": str(len(messages) + 1),
         "title": message["title"],
         "recordingUrl": "https://jees.com/uusi",
-        "createdAt": "2017-01-01T00:00:00"
+        "createdAt": "2017-01-01T00:00:00",
     }
     messages.append(new_message)
     return new_message

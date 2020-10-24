@@ -40,15 +40,11 @@ DEBUG = config("DEBUG", cast=bool, default=False)
 # )
 # DB_RETRY_LIMIT = config("DB_RETRY_LIMIT", cast=int, default=1)
 # DB_RETRY_INTERVAL = config("DB_RETRY_INTERVAL", cast=int, default=1)
-# 
+#
 # # File API
-# FILE_API_FOLDER = config(
-#     "FILE_API_FOLDER", default=Path(__file__).parent.parent.absolute() / "files"
-# )
+FILE_API_FOLDER = config(
+    "FILE_API_FOLDER", default=Path(__file__).parent.parent.absolute() / "files"
+)
 # FILE_API_DEFAULT_CHUNK_SIZE = config(
 #     "FILE_API_DEFAULT_BLOCKSIZE", cast=int, default=1024
 # )
-# FILE_API_BASE_URL = config("FILE_API_BASE_URL", cast=str, default="/files")
-# 
-# # Graphql API
-# GRAPHQL_API_BASE_URL = config("GRAPHQL_API_BASE_URL", cast=str, default="/graphql")
