@@ -1,23 +1,11 @@
-version: '3'
+version: "3.8"
 services:
   database:
-    image: "postgres"
-    env_file:
-      - .env
+    image: edgedb/edgedb:1-alpha6
     volumes:
-      - data:/var/lib/postgresql/data/
+      - edgedb-data:/var/lib/edgedb/data
     ports:
-      - 5432:5432
-  test_database:
-    image: "postgres"
-    environment:
-      - POSTGRES_USER=nois_test
-      - POSTGRES_PASSWORD=nois_test
-      - POSTGRES_DB=nois_test
-    volumes:
-      - test_data:/var/lib/postgresql/data/
-    ports:
-      - 5432:5432
+      - "5656:5656"
+
 volumes:
-  data:
-  test_data:
+  edgedb-data:
