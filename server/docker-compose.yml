@@ -6,7 +6,6 @@ services:
       - edgedb-data:/var/lib/edgedb/data
     ports:
       - "5656:5656"
-      - "8888:8888"
 
 volumes:
   edgedb-data:
