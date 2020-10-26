@@ -1,14 +1,19 @@
-from typing import AsyncGenerator, Optional
+from typing import Optional
 import asyncio
 
-from edgedb import AsyncIOConnection, AsyncIOPool, create_async_pool, async_connect
+from edgedb import AsyncIOConnection, async_connect, create_async_pool, AsyncIOPool
 from pathlib import Path
 
-from nois_api.config import EDGEDB_HOST, EDGEDB_USER, EDGEDB_DB
+from server.config import EDGEDB_HOST, EDGEDB_USER, EDGEDB_DB
 import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+max_tries = 60 * 5  # 5 minutes
+wait_seconds = 1
+schema_file = Path(__file__).parent / "schema.esdl"
+
 
 pool: AsyncIOPool
 
@@ -23,24 +28,13 @@ async def create_pool() -> None:
 
 
 async def close_pool() -> None:
+    global pool
     await pool.aclose()
 
 
-async def get_connection() -> AsyncGenerator[AsyncIOConnection, None]:
-    try:
-        connection = await pool.acquire()
-        yield connection
-    finally:
-        await pool.release(connection)
-
-
-async def get_pool():
-    return await pool
-
-
-max_tries = 60 * 5  # 5 minutes
-wait_seconds = 1
-schema_file = Path(__file__).parent / "schema.esdl"
+async def get_pool() -> AsyncIOPool:
+    global pool
+    return pool
 
 
 async def check_db() -> Optional[AsyncIOConnection]:
@@ -67,7 +61,7 @@ Attempt {attempt + 1}/{max_tries} to connect to database, waiting {wait_seconds}
 
 
 async def init_db() -> None:
-    logger.info("Initializing service")
+    logger.info("Performing database migrations")
     con = await check_db()
     if con:
         with open(schema_file) as f:
@@ -76,4 +70,4 @@ async def init_db() -> None:
             await con.execute(f"""START MIGRATION TO {{ {schema} }}""")
             await con.execute("""POPULATE MIGRATION""")
             await con.execute("""COMMIT MIGRATION""")
-        logger.info("Service finished initializing")
+        logger.info("Database initialized and migrations committed")

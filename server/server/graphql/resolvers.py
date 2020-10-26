@@ -1,9 +1,9 @@
 from ariadne import QueryType, MutationType
-from nois_api.database import get_connection, get_pool
 from typing import Dict, Any
 from uuid import UUID
 from datetime import datetime
 from edgedb import NoDataError
+from server.database import get_pool
 
 query = QueryType()
 mutation = MutationType()
@@ -29,16 +29,12 @@ def get_shape(data: Dict[str, Any]) -> str:
 
 
 def parse_raw(data):
-    return {
-        **data,
-        "recordingUrl": f"http://localhost/{str(data.id)}"
-    }
+    return {**data, "recordingUrl": f"http://localhost/{str(data.id)}"}
 
 
 @query.field("message")
 async def resolve_message(*args, id):
-    pool = await get_pool()
-    print(pool)
+    pool = get_pool()
     try:
         con = await pool.acquire()
         result = await con.query_one_json(
@@ -64,7 +60,7 @@ async def resolve_all_messages(*args):
 @mutation.field("createMessage")
 async def resolve_create_message(_, info, message):
     shape_expr = get_shape(message)
-    pool = await get_pool()
+    pool = get_pool()
     try:
         con = await pool.acquire()
         # TODO: error checking and good reporting with graphql
@@ -86,4 +82,3 @@ async def resolve_create_message(_, info, message):
         await pool.release(con)
     item = parse_raw(result)
     return item
-

@@ -3,8 +3,8 @@ from ariadne import load_schema_from_path
 from ariadne.asgi import GraphQL
 from pathlib import Path
 
-from nois_api.config import DEBUG
-from nois_api.graphql.resolvers import query, mutation
+from server.config import DEBUG
+from server.graphql.resolvers import query, mutation
 
 schema_file = Path(__file__).parent / "schema.graphql"
 

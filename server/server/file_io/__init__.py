@@ -1,4 +1,4 @@
-from nois_api.config import FILE_API_FOLDER
+from server.config import FILE_API_FOLDER
 from starlette.datastructures import UploadFile
 from starlette.responses import FileResponse
 from typing import Union

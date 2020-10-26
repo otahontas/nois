@@ -1,4 +1,4 @@
-from nois_api.file_io import open_file
+from server.file_io import open_file
 from starlette.requests import Request
 from starlette.responses import FileResponse
 from starlette.routing import Route
@@ -22,4 +22,4 @@ async def get_file(request: Request) -> FileResponse:
     return response
 
 
-api_routes = [Route("/files/{filename}", get_file, methods=["GET"])]
+api_routes = [Route("/files/{filename:uuid}", get_file, methods=["GET"])]
