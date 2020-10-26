@@ -18,3 +18,7 @@ GraphQL API for the anonymous voice message board app Nois.
 
 - Code errors can be checked with `poetry run flake8 .`
 - Code style errors can be checked with `poetry run black --check .`
+
+
+TODO:
+- graphql initializing
