@@ -1,4 +1,4 @@
-# Nois app
+# Application
 
 This folder contains source for Nois application, which is mainly built with Typescript, React Native / Expo, Apollo GraphQL -client and UI Kitten -framework.
 
