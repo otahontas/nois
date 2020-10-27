@@ -1,73 +1,94 @@
-from typing import Optional
+from typing import Optional, Callable, Any
 import asyncio
+from dataclasses import dataclass
+from functools import wraps
 
-from edgedb import AsyncIOConnection, async_connect, create_async_pool, AsyncIOPool
+from edgedb import (
+    AsyncIOConnection,
+    create_async_pool,
+    AsyncIOPool,
+    ClientConnectionError,
+)
 from pathlib import Path
 
-from server.config import EDGEDB_HOST, EDGEDB_USER, EDGEDB_DB
-import logging
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-max_tries = 60 * 5  # 5 minutes
-wait_seconds = 1
-schema_file = Path(__file__).parent / "schema.esdl"
+from server.config import EDGEDB_HOST, EDGEDB_USER, EDGEDB_DB, logger
 
 
-pool: AsyncIOPool
+def auto_reconnect(func: Callable) -> Callable:
+    @wraps(func)
+    async def retry(*args: Any, **kwargs: Any) -> Any:
+        """Retry given method for multiple times in increasing intervals."""
+        max_attempts = 4
+        timeout = 5
 
-
-async def create_pool() -> None:
-    global pool
-    pool = await create_async_pool(
-        host=EDGEDB_HOST,
-        database=EDGEDB_DB,
-        user=EDGEDB_USER,
-    )
-
-
-async def close_pool() -> None:
-    global pool
-    await pool.aclose()
-
-
-async def get_pool() -> AsyncIOPool:
-    global pool
-    return pool
-
-
-async def check_db() -> Optional[AsyncIOConnection]:
-    for attempt in range(max_tries):
-        try:
-            con = await async_connect(
-                host=EDGEDB_HOST,
-                database=EDGEDB_DB,
-                user=EDGEDB_USER,
-            )
-            # Try to create session to check if DB is awake
-            await con.execute("SELECT 1")
-            return con
-        except Exception as e:
-            if attempt < max_tries - 1:
+        for attempt in range(1, max_attempts + 1):
+            try:
+                return await func(*args, **kwargs)
+            except ClientConnectionError as error:
+                if attempt == max_attempts:
+                    logger.error(
+                        f"Connection to database failed after {attempt} " "tries"
+                    )
+                    raise error
                 logger.error(
-                    f"""{e}
-Attempt {attempt + 1}/{max_tries} to connect to database, waiting {wait_seconds}s."""
+                    f"Connection not successful, trying to reconnect."
+                    f"Reconnection attempt number {attempt}, waiting "
+                    f" for {timeout} seconds."
                 )
-                await asyncio.sleep(wait_seconds)
-            else:
-                raise e
-    return None
+                await asyncio.sleep(timeout)
+                timeout *= 2
+                continue
+
+    return retry
 
 
-async def init_db() -> None:
-    logger.info("Performing database migrations")
-    con = await check_db()
-    if con:
-        with open(schema_file) as f:
-            schema = f.read()
-        async with con.transaction():
-            await con.execute(f"""START MIGRATION TO {{ {schema} }}""")
-            await con.execute("""POPULATE MIGRATION""")
-            await con.execute("""COMMIT MIGRATION""")
-        logger.info("Database initialized and migrations committed")
+@dataclass
+class EdgeDBConnection:
+    """Wrap connection stuff inside class."""
+
+    host: str = EDGEDB_HOST
+    database: str = EDGEDB_DB
+    user: str = EDGEDB_USER
+    pool: Optional[AsyncIOPool] = None
+    schema_file: Path = Path(__file__).parent / "schema.esdl"
+    close_timeout: int = 60
+
+    @auto_reconnect
+    async def create_pool(self) -> None:
+        """Create pool, if not already created"""
+        self.pool = await create_async_pool(
+            host=self.host, database=self.database, user=self.user
+        )
+
+    async def close_pool(self) -> None:
+        """Close pool, terminate if not possible in given time."""
+        if self.pool:
+            await asyncio.wait_for(self.pool.aclose(), timeout=self.close_timeout)
+
+    async def get_pool(self) -> AsyncIOConnection:
+        """Returns connection pool, creates it if not created.
+
+        To properly get and release connection, use with context manager, e.g.
+        pool = db.get_pool()
+        async with pool.acquire() as con:
+            ...do things here
+        """
+        if not self.pool:
+            await self.create_pool()
+        return self.pool
+
+    async def initialize_database(self):
+        """Initialize the database connections and do migrations."""
+        logger.info("Starting database initialization and migrations.")
+        pool = await self.get_pool()
+        async with pool.acquire() as con:
+            with open(self.schema_file) as f:
+                schema = f.read()
+            async with con.transaction():
+                await con.execute(f"""START MIGRATION TO {{ {schema} }}""")
+                await con.execute("""POPULATE MIGRATION""")
+                await con.execute("""COMMIT MIGRATION""")
+        logger.info("Database initialized and migrations committed.")
+
+
+db = EdgeDBConnection()
