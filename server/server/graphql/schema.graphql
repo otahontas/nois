@@ -10,7 +10,7 @@ type Message {
 
 input CreateMessageInput {
   title: String!
-  # recording: Upload!
+  recording: Upload!
 }
 
 type Query {

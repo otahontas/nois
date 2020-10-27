@@ -1,84 +1,50 @@
 from ariadne import QueryType, MutationType
-from typing import Dict, Any
-from uuid import UUID
-from datetime import datetime
-from edgedb import NoDataError
-from server.database import get_pool
+from datetime import datetime, timezone
+from server.database import db
+from server.database.utils import turn_dict_to_edgeql_expression
+from server.file_io import save_file
+import json
 
 query = QueryType()
 mutation = MutationType()
 
 
-def get_type(value: Any) -> str:
-    if type(value) == bool:
-        return "<bool>"
-    elif type(value) == str:
-        return "<str>"
-    elif type(value) == int:
-        return "<int64>"
-    elif type(value) == UUID:
-        return "<uuid>"
-    else:
-        raise ValueError("Type not found.")
-
-
-def get_shape(data: Dict[str, Any]) -> str:
-    shape_list = [f"{k} := {get_type(v)}${k}" for k, v in data.items()]
-    shape_expr = ", ".join(shape_list)
-    return shape_expr
-
-
-def parse_raw(data):
-    return {**data, "recordingUrl": f"http://localhost/{str(data.id)}"}
-
-
 @query.field("message")
-async def resolve_message(*args, id):
-    pool = get_pool()
-    try:
-        con = await pool.acquire()
-        result = await con.query_one_json(
-            """SELECT Message {
-                id,
-                title,
-                created_at
-            }
-            FILTER .id = <uuid>$id""",
-            id=id,
-        )
-    except NoDataError:
-        return None
-    item = parse_raw(result)
-    return item
+async def resolve_message(*args, _id):
+    """Return message metadata."""
+    pass
 
 
 @query.field("allMessages")
 async def resolve_all_messages(*args):
+    """Return message metadata for all messages."""
     pass
 
 
 @mutation.field("createMessage")
 async def resolve_create_message(_, info, message):
-    shape_expr = get_shape(message)
-    pool = get_pool()
-    try:
-        con = await pool.acquire()
-        # TODO: error checking and good reporting with graphql
+    """Save message metadata to db and recording upload to disk."""
+    message_to_db = {
+        "title": message["title"],
+        "created_at": datetime.now(timezone.utc),
+    }
+    edgeql_expression = turn_dict_to_edgeql_expression(message_to_db)
+    pool = await db.get_pool()
+    async with pool.acquire() as con:
         result = await con.query_one_json(
             f"""SELECT (
                     INSERT Message {{
-                        {shape_expr}
-                        created_at:= <datetime>${datetime.now()}
-                        )
+                        {edgeql_expression}
                     }}
                 ) {{
                     id,
                     title,
                     created_at
                 }}""",
-            **message,
+            **message_to_db,
         )
-    finally:
-        await pool.release(con)
-    item = parse_raw(result)
-    return item
+    result_json = json.loads(result)
+    _id = result_json["id"]
+    await save_file(_id, message["recording"])
+    recording_url = f"http://localhost/api/files/{_id}"
+    return {**result_json, "recordingUrl": recording_url}
