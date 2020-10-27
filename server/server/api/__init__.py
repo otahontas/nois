@@ -22,4 +22,4 @@ async def get_file(request: Request) -> FileResponse:
     return response
 
 
-api_routes = [Route("/files/{filename:uuid}", get_file, methods=["GET"])]
+api_routes = [Route("/files/{filename}", get_file, methods=["GET"])]

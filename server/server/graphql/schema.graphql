@@ -6,6 +6,8 @@ type Message {
   title: String!
   recordingUrl: String!
   createdAt: DateTime!
+  recordingContentType: String!
+  recordingExtension: String!
 }
 
 input CreateMessageInput {
@@ -14,8 +16,8 @@ input CreateMessageInput {
 }
 
 type Query {
-  message(id: ID!): Message!
-  allMessages: [Message]!
+  getMessage(id: ID!): Message!
+  getMessages: [Message]!
 }
 
 type Mutation {
