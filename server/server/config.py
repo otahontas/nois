@@ -2,6 +2,8 @@ from starlette.config import Config
 
 from pathlib import Path
 
+import logging
+
 config = Config(".env")
 
 # Testing & development variales
@@ -17,3 +19,12 @@ EDGEDB_DB = config("EDGEDB_DB", cast=str, default="edgedb")
 FILE_API_FOLDER = config(
     "FILE_API_FOLDER", default=Path(__file__).parent.parent.absolute() / "files"
 )
+
+# Logging
+logging_format = (
+    "[%(asctime)s][%(name)s][%(process)d %(processName)s]"
+    "[%(levelname)-8s](L:%(lineno)s) %(funcName)s: %(message)s"
+)
+logging.basicConfig(format=logging_format, datefmt="%Y-%m-%d %H:%M:%S")
+logger = logging.getLogger("server")
+logger.setLevel(logging.INFO)
