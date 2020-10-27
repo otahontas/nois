@@ -3,12 +3,7 @@ import asyncio
 from dataclasses import dataclass
 from functools import wraps
 
-from edgedb import (
-    AsyncIOConnection,
-    create_async_pool,
-    AsyncIOPool,
-    ClientConnectionError,
-)
+from edgedb import create_async_pool, ClientConnectionError, AsyncIOPool
 from pathlib import Path
 
 from server.config import EDGEDB_HOST, EDGEDB_USER, EDGEDB_DB, logger
@@ -24,7 +19,7 @@ def auto_reconnect(func: Callable) -> Callable:
         for attempt in range(1, max_attempts + 1):
             try:
                 return await func(*args, **kwargs)
-            except ClientConnectionError as error:
+            except (ClientConnectionError, ConnectionAbortedError) as error:
                 if attempt == max_attempts:
                     logger.error(
                         f"Connection to database failed after {attempt} " "tries"
@@ -65,7 +60,7 @@ class EdgeDBConnection:
         if self.pool:
             await asyncio.wait_for(self.pool.aclose(), timeout=self.close_timeout)
 
-    async def get_pool(self) -> AsyncIOConnection:
+    async def get_pool(self) -> AsyncIOPool:
         """Returns connection pool, creates it if not created.
 
         To properly get and release connection, use with context manager, e.g.
@@ -77,7 +72,7 @@ class EdgeDBConnection:
             await self.create_pool()
         return self.pool
 
-    async def initialize_database(self):
+    async def initialize_database(self) -> None:
         """Initialize the database connections and do migrations."""
         logger.info("Starting database initialization and migrations.")
         pool = await self.get_pool()
