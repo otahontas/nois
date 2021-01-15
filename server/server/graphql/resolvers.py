@@ -10,8 +10,18 @@ query = QueryType()
 mutation = MutationType()
 
 
+def parse_message(data, request):
+    _id = data["id"]
+    file_extension = data["recording_extension"]
+    filename = f"{_id}.{file_extension}"
+    url = request.url_for("api:get_file", filename=filename)
+    print(url)
+    recording_url = f"http://localhost:8000/api/files/{filename}"
+    return {**data, "recording_url": recording_url}
+
+
 @query.field("getMessage")
-async def resolve_message(*_, _id):
+async def resolve_message(_, info, id):
     """Return message metadata."""
     pool = await db.get_pool()
     async with pool.acquire() as con:
@@ -23,19 +33,14 @@ async def resolve_message(*_, _id):
                 recording_content_type,
                 recording_extension
                 }
-                FILTER .id = <uuid>$_id""",
-            _id=_id,
+                FILTER .id = <uuid>$id""",
+            id=id,
         )
-    result_json = json.loads(result)
-    file_extension = result_json["recording_extension"]
-    filename = f"{_id}.{file_extension}"
-    recording_url = f"http://localhost:8000/api/files/{filename}"  # fix correct url
-    print(recording_url)
-    return {**result_json, "recording_url": recording_url}
+    return parse_message(json.loads(result), info.context["request"])
 
 
 @query.field("getMessages")
-async def resolve_all_messages(*args):
+async def resolve_all_messages(_, info):
     """Return message metadata for all messages."""
     pool = await db.get_pool()
     async with pool.acquire() as con:
@@ -53,8 +58,10 @@ async def resolve_all_messages(*args):
             )"""
         )
     result_json = json.loads(result)
-    print(result_json)
-    return result_json["data"]
+    messages = []
+    for message in result_json["data"]:
+        messages.append(parse_message(message, info.context["request"]))
+    return messages
 
 
 @mutation.field("createMessage")
@@ -89,10 +96,9 @@ async def resolve_create_message(_, info, message):
                 }}""",
             **message_to_db,
         )
-    result_json = json.loads(result)
-    _id = result_json["id"]
+    message_to_return = parse_message(json.loads(result), info.context["request"])
+    _id = result["id"]
+    file_extension = result["recording_extension"]
     filename = f"{_id}.{file_extension}"
     await save_file(filename, message["recording"])
-    recording_url = f"http://localhost:8000/api/files/{filename}"  # fix correct url
-    print(recording_url)
-    return {**result_json, "recording_url": recording_url}
+    return message_to_return

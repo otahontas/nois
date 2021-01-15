@@ -8,7 +8,8 @@ from server.config import DEBUG
 from server.database import db
 from server.file_io import init_file_api_folder
 
-routes = [Route("/graphql", graphql_app), Mount("/api", routes=api_routes)]
+routes = [Route("/graphql", graphql_app, name="graphql"),
+          Mount("/api", routes=api_routes, name="api")]
 
 app = Starlette(
     routes=routes,

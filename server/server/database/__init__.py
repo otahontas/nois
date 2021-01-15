@@ -44,6 +44,7 @@ class EdgeDBConnection:
     host: str = EDGEDB_HOST
     database: str = EDGEDB_DB
     user: str = EDGEDB_USER
+    migrate: bool = False
     pool: Optional[AsyncIOPool] = None
     schema_file: Path = Path(__file__).parent / "schema.esdl"
     close_timeout: int = 60
@@ -74,16 +75,17 @@ class EdgeDBConnection:
 
     async def initialize_database(self) -> None:
         """Initialize the database connections and do migrations."""
-        logger.info("Starting database initialization and migrations.")
-        pool = await self.get_pool()
-        async with pool.acquire() as con:
-            with open(self.schema_file) as f:
-                schema = f.read()
-            async with con.transaction():
-                await con.execute(f"""START MIGRATION TO {{ {schema} }}""")
-                await con.execute("""POPULATE MIGRATION""")
-                await con.execute("""COMMIT MIGRATION""")
-        logger.info("Database initialized and migrations committed.")
+        if self.migrate:
+            logger.info("Starting database initialization and migrations.")
+            pool = await self.get_pool()
+            async with pool.acquire() as con:
+                with open(self.schema_file) as f:
+                    schema = f.read()
+                async with con.transaction():
+                    await con.execute(f"""START MIGRATION TO {{ {schema} }}""")
+                    await con.execute("""POPULATE MIGRATION""")
+                    await con.execute("""COMMIT MIGRATION""")
+            logger.info("Database initialized and migrations committed.")
 
 
 db = EdgeDBConnection()
