@@ -10,4 +10,7 @@
 | 16.9.   | 3     | Appin kehitystä: ui-kirjaston valinta, ui-kirjaston testailua, expon audio-apin tutkailua |
 | 19.10.  | 7     | äänitysominaisuutta, äänitysnäkymää, eslint & prettier config local + ci-putki |
 | 23.10.  | 7     | custom hook äänittämiseen, xstate käyttöönotto, formik käyttöönotto |
-| **yht.**|       | | 
+| 24.10.  | 4     | tietokantamodeleista luopuminen, graphql tilalle |
+| 26.10.  | 2     | graphql & serverin hiomista, edgedb:n lisääminen |
+| 27.10.  | 3     | edgedb hiomista |
+| **yht.**| 45    |
