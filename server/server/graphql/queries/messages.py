@@ -5,35 +5,48 @@ from typing import Optional
 from strawberry import ID
 
 from server.graphql.types.message import Message
+from server.graphql.types.user import User
 
-example_list = [
+users = [
+    User(
+        id="22d911b6-09af-485d-99c9-dfe2d60b052b",
+        createdAt="2011-11-03 00:02:23.283+00:00",
+
+    ),
+    User(
+        id="602cc61e-4612-44cc-96aa-1039bdd3f4ba",
+        createdAt="2011-11-02 00:01:23.283+00:00",
+    )
+]
+
+messages = [
     Message(
-        id="1234",
-        title="Jeeps",
-        recordingUrl="https://janna.com/jeejee",
-        createdAt="2020-12-12",
+        id="afaf10ee-0784-49b8-937e-6d49b9884689",
+        createdAt="2011-11-02 00:01:23.283+00:00",
+        recordingUrl="https://juuh.com/jeejee1.ogg",
+        postedBy=users[0]
     ),
     Message(
-        id="5678",
-        title="juuh",
-        recordingUrl="https://janna.com/joojoo",
-        createdAt="2020-12-12",
+        id="8e8107de-0288-4cb3-ba9f-de266eee30a6",
+        createdAt="2011-11-02 00:01:23.283+00:00",
+        recordingUrl="https://juuh.com/jeejee2.ogg",
+        postedBy=users[0]
     ),
     Message(
-        id="91011",
-        title="jou",
-        recordingUrl="https://janna.com/juujuu",
-        createdAt="2020-12-12",
+        id="4f916520-0192-42a1-9277-31bff001e311",
+        createdAt="2011-11-02 00:01:23.283+00:00",
+        recordingUrl="https://janna.com/jeejee3.ogg",
+        postedBy=users[1]
     ),
 ]
 
 
-async def get_messages() -> list[Message]:
-    return example_list
+async def all_messages() -> list[Message]:
+    return messages
 
 
-async def get_message(message_id: ID) -> Optional[Message]:
+async def message(message_id: ID) -> Optional[Message]:
     try:
-        return next(message for message in example_list if message.id == message_id)
+        return next(m for m in messages if m.id == message_id)
     except StopIteration:
-        return None
+        pass

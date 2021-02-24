@@ -1,16 +1,21 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import strawberry
 from strawberry.asgi import GraphQL
 
-from server.graphql.queries.messages import get_messages, get_message
+from server.graphql.queries.messages import all_messages
+from server.graphql.queries.threads import all_threads, thread
 from server.graphql.types.message import Message
+from server.graphql.types.thread import Thread
 
 
 @strawberry.type
 class Query:
-    messages: list[Message] = strawberry.field(resolver=get_messages)
-    message: Message = strawberry.field(resolver=get_message)
+    threads: list[Thread] = strawberry.field(resolver=all_threads)
+    thread: Optional[Thread] = strawberry.field(resolver=thread)
+    messages: list[Message] = strawberry.field(resolver=all_messages)
 
 
 graphql_app = GraphQL(strawberry.Schema(query=Query))
