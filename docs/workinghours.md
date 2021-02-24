@@ -13,5 +13,4 @@
 | 24.10.2020  | 4     | tietokantamodeleista luopuminen, graphql tilalle |
 | 26.10.2020  | 2     | graphql & serverin hiomista, edgedb:n lisääminen |
 | 27.10.2020  | 3     | edgedb hiomista |
-| 24.2.2021   | -     | getting on track tauon jälkeen |
-| **yht.**| 45    |
+| 24.2.2021   | 8     | getting on track tauon jälkeen, edellinen graphql + db roskiin, uusi tilalle |
