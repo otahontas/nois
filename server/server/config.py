@@ -2,25 +2,16 @@ from __future__ import annotations
 
 from starlette.config import Config
 
-from pathlib import Path
-
 import logging
 
 config = Config(".env")
 
-# Testing & development variales
+# Testing & development variables
 TESTING = config("TESTING", cast=bool, default=False)
 DEBUG = config("DEBUG", cast=bool, default=False)
 
 # Database
-EDGEDB_HOST = config("EDGEDB_HOST", cast=str, default="db")
-EDGEDB_USER = config("EDGEDB_USER", cast=str, default="edgedb")
-EDGEDB_DB = config("EDGEDB_DB", cast=str, default="edgedb")
-
-# Files
-FILE_API_FOLDER = config(
-    "FILE_API_FOLDER", default=Path(__file__).parent.parent.absolute() / "files"
-)
+DATABASE_URL = config("DATABASE_URL", cast=str, default="sqlite:///test.db")
 
 # Logging
 logging_format = (
