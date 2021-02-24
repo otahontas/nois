@@ -5,9 +5,7 @@ from typing import Optional
 import strawberry
 from strawberry.asgi import GraphQL
 
-from server.graphql.queries.messages import all_messages
 from server.graphql.queries.threads import all_threads, thread
-from server.graphql.types.message import Message
 from server.graphql.types.thread import Thread
 
 
@@ -15,7 +13,6 @@ from server.graphql.types.thread import Thread
 class Query:
     threads: list[Thread] = strawberry.field(resolver=all_threads)
     thread: Optional[Thread] = strawberry.field(resolver=thread)
-    messages: list[Message] = strawberry.field(resolver=all_messages)
 
 
 graphql_app = GraphQL(strawberry.Schema(query=Query))

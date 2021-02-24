@@ -4,52 +4,39 @@ from typing import Optional
 
 from strawberry import ID
 
+from server.database import fetch_thread
 from server.graphql.types.thread import Thread
+from server.graphql.types.message import Message
 from server.graphql.types.user import User
-
-users = [
-    User(
-        id="22d911b6-09af-485d-99c9-dfe2d60b052b",
-        createdAt="2011-11-03 00:02:23.283+00:00",
-
-    ),
-    User(
-        id="602cc61e-4612-44cc-96aa-1039bdd3f4ba",
-        createdAt="2011-11-02 00:01:23.283+00:00",
-    )
-]
-
-threads = [
-    Thread(
-        id="3a8609a5-58c1-40c7-9016-66dc83245be8",
-        createdAt="2011-11-04 00:05:23.283+00:00",
-        messages=[],
-        postedBy=users[0],
-        title="ebin juttu kävi kampis"
-    ),
-    Thread(
-        id="ed91ddee-d038-4c82-9028-87313ddf0bef",
-        createdAt="2011-11-04 00:08:.283+00:00",
-        messages=[],
-        postedBy=users[0],
-        title="huoh en jaksa enää koronaa"
-    ),
-    Thread(
-        id="91011",
-        createdAt="2011-11-04 00:12:23.283+00:00",
-        messages=[],
-        postedBy=users[1],
-        title="pääsykoecasesta settiä",
-    ),
-]
 
 
 async def all_threads() -> list[Thread]:
-    return threads
+    return []
 
 
 async def thread(thread_id: ID) -> Optional[Thread]:
     try:
-        return next(t for t in threads if t.id == thread_id)
-    except StopIteration:
+        raw_thread, raw_messages = await fetch_thread(thread_id)
+    except ValueError:
         return None
+    messages = []
+    base_url = "https://example.com"
+    for raw_message in raw_messages:
+        recording_uuid = raw_message["recording_uuid"]
+        messages.append(
+            Message(
+                id=raw_message["id"],
+                createdAt=raw_message["created_at"],
+                recordingUrl=f"{base_url}/{recording_uuid}",
+                postedBy=User(
+                    id=raw_message["user_id"], createdAt=raw_message["created_at"]
+                ),
+            )
+        )
+    return Thread(
+        id=raw_thread["id"],
+        createdAt=raw_thread["created_at"],
+        messages=messages,
+        postedBy=User(id=raw_thread["user_id"], createdAt=raw_thread["created_at"]),
+        title=raw_thread["title"],
+    )
