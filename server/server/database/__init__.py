@@ -1,9 +1,44 @@
 from __future__ import annotations
+
 import asyncpg
 import uuid
 
 create_new_tables = True
 populate = True
+
+
+async def fetch_all_threads():
+    conn = await asyncpg.connect("postgresql://nois:nois@localhost:5432/nois")
+    result = await conn.fetch("SELECT * from threads;")
+    await conn.close()
+    return result
+
+
+async def fetch_thread(thread_id):
+    # thread id is not, int but string ID from graphql
+    conn = await asyncpg.connect("postgresql://nois:nois@localhost:5432/nois")
+    thread = await conn.fetchrow(
+        """
+        SELECT t.id, t.created_at, t.title,
+        u.id AS user_id, u.created_at AS user_created_at
+        FROM threads t
+        INNER JOIN users u ON u.id = t.user_id
+        WHERE t.id = $1;
+    """,
+        int(thread_id),
+    )
+    messages = await conn.fetch(
+        """
+        SELECT m.id, m.created_at, m.recording_uuid,
+        u.id AS user_id, u.created_at AS user_created_at
+        FROM messages m
+        INNER JOIN users u ON u.id = m.user_id
+        WHERE m.thread_id = $1;
+    """,
+        int(thread_id),
+    )
+    await conn.close()
+    return thread, messages
 
 
 async def initialize_database():
@@ -47,14 +82,14 @@ async def initialize_database():
         first_user, second_user = await conn.fetch("SELECT id FROM users;")
         await conn.execute(
             """
-            INSERT INTO threads (title, user_id) VALUES($1, $2);
+            INSERT INTO threads (title, user_id, created_at) VALUES($1, $2, NOW());
         """,
             "Huoh tätä koronaa",
             first_user["id"],
         )
         await conn.execute(
             """
-            INSERT INTO threads (title, user_id) VALUES($1, $2);
+            INSERT INTO threads (title, user_id, created_at) VALUES($1, $2, NOW());
         """,
             "Ebin juttu kävi kampis",
             first_user["id"],
@@ -71,8 +106,8 @@ async def initialize_database():
         for thread in threads:
             await conn.executemany(
                 """
-                INSERT INTO messages (recording_uuid, thread_id, user_id)
-                VALUES($1, $2, $3);
+                INSERT INTO messages (created_at, recording_uuid, thread_id, user_id)
+                VALUES(NOW(), $1, $2, $3);
             """,
                 [
                     (uuid.uuid4(), thread["id"], first_user["id"]),
@@ -80,3 +115,4 @@ async def initialize_database():
                     (uuid.uuid4(), thread["id"], first_user["id"]),
                 ],
             )
+    await conn.close()
