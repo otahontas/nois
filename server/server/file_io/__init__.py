@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from server.config import FILE_API_FOLDER
 from starlette.datastructures import UploadFile
 from starlette.responses import FileResponse

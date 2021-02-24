@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from starlette.config import Config
 
 from pathlib import Path

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Optional, Callable, Any
 import asyncio
 from dataclasses import dataclass

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from server.file_io import open_file
 from starlette.requests import Request
 from starlette.responses import FileResponse
