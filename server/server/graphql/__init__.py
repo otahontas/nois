@@ -1,17 +1,25 @@
-from ariadne import make_executable_schema, snake_case_fallback_resolvers
-from ariadne import load_schema_from_path
-from ariadne.asgi import GraphQL
-from pathlib import Path
+from __future__ import annotations
+import typing
+import strawberry
+from strawberry.asgi import GraphQL
 
-from server.config import DEBUG
-from server.graphql.resolvers import query, mutation
 
-schema_file = Path(__file__).parent / "schema.graphql"
+async def get_books():
+    return [
+        Book(
+            title='The Great Gatsby',
+            author='F. Scott Fitzgerald',
+        ),
+    ]
 
-type_defs = load_schema_from_path(str(schema_file))
+@strawberry.type
+class Book:
+    title: str
+    author: str
 
-schema = make_executable_schema(
-    type_defs, query, mutation, snake_case_fallback_resolvers
-)
+@strawberry.type
+class Query:
+    books: typing.List[Book] = strawberry.field(resolver=get_books)
 
-graphql_app = GraphQL(schema, debug=DEBUG)
+
+graphql_app = GraphQL(strawberry.Schema(query=Query))
