@@ -11,7 +11,9 @@ TESTING = config("TESTING", cast=bool, default=False)
 DEBUG = config("DEBUG", cast=bool, default=False)
 
 # Database
-DATABASE_URL = config("DATABASE_URL", cast=str, default="sqlite:///test.db")
+DATABASE_URL = config(
+    "DATABASE_URL", cast=str, default="postgresql://nois:nois@localhost:5432/nois"
+)
 
 # Logging
 logging_format = (
