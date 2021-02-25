@@ -1,0 +1,4 @@
+- graphql-based backend in Hasura
+- hosted database in Yugabyte
+- user management in X
+- blaablaa
