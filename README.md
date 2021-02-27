@@ -2,8 +2,6 @@
 
 Anonymous voice message app. Project is still in very WIP status.
 
-Check [working hours](docs/workinghours.md) for details on project progress.
-
 ## Table of contents
 
 * [General info](#general-info)
